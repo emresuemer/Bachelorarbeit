@@ -1,0 +1,135 @@
+% Engine: XeLaTeX + biber (see build.sh). The chain below is what TeXstudio runs
+% for this document; it overrides whatever "Default Compiler" is set to locally,
+% and mirrors build.sh exactly (xelatex -> biber -> xelatex -> xelatex).
+% !TeX TXS-program:compile = txs:///xelatex | txs:///biber | txs:///xelatex | txs:///xelatex
+% !TeX TXS-program:bibliography = txs:///biber
+
+
+%% bachelorarbeit.tex  --  main file
+%%
+%% Bachelorarbeit, Fachgruppe Soziologie, Otto-Friedrich-Universitaet Bamberg
+%%
+%% COMPILE (XeLaTeX -- recommended):
+%%     xelatex bachelorarbeit
+%%     biber   bachelorarbeit
+%%     xelatex bachelorarbeit
+%%     xelatex bachelorarbeit
+%% or simply:   latexmk -xelatex bachelorarbeit
+%% For LuaLaTeX: replace "xelatex" with "lualatex" (works identically).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[
+  fontsize=12pt,     % Merkblatt 3.3: 12pt
+  a4paper,
+  twoside=false,     % single-sided; set true if you bind double-sided
+  numbers=noenddot,
+  parskip=never,     % indented paragraphs, no extra vertical gap
+  chapterprefix=false,
+]{scrreprt}
+
+\usepackage[apa]{bamberg-thesis}       % all formatting rules live here
+
+% Bibliography database -----------------------------------------------------
+\addbibresource{literatur.bib}
+% Force the journal-article and online examples into the bibliography so the
+% template shows those formats too (remove once you write your own text):
+\nocite{henz1995,dietrich2011}
+
+% Thesis metadata (shown on the cover page) ---------------------------------
+\thesistitle{Sprachkurse als Schlüssel zur Arbeitsmarktintegration von Geflüchteten? Eine Replikation und
+	Erweiterung der Untersuchung von Kanas und Kosyakova (2023)}
+\thesisauthor{Mehmet Emre Sümer}
+\thesismatrikel{2067968}
+\thesiscontact{emre\_suemer@stud.uni-bamberg.de}
+\thesisfirstreviewer{Prof.\ Dr.\ Cornelia Kristen}
+\thesissecondreviewer{}   % leave with {} if none, Dr.\ Zweitgutachter/in
+\thesisstudiengang{Soziologie}
+\thesisfaculty{Sozial- und Wirtschaftswissenschaften}
+\thesisdate{\today}
+\thesislogo{figures/logo-uni-bamberg}   % override the default logo path here
+
+\begin{document}
+
+% ---- Cover page (Deckblatt) ------------------------------------------------
+\makedeckblatt
+
+% Leerseite nach dem Deckblatt (ohne Seitenzahl), damit der Abstract beim
+% beidseitigen Druck auf einer rechten Seite beginnt.
+\thispagestyle{empty}
+\null
+\newpage
+
+% ---- Front matter: roman page numbers --------------------------------------
+\pagenumbering{roman}
+
+% Optional preface (Vorwort). Comment out if you do not need one.
+% \input{chapters/vorwort}
+
+% Abstract / Kurzfassung (the English one uses correct English hyphenation).
+\input{chapters/abstract}
+
+% Table of contents
+\tableofcontents
+
+% Optional lists -- uncomment the ones you actually use.
+\listoffigures
+\listoftables
+% \input{chapters/abkuerzungsverzeichnis}   % Abkuerzungsverzeichnis (optional)
+
+% ---- Main matter: arabic page numbers, restart at 1 ------------------------
+\cleardoublepage
+\pagenumbering{arabic}
+
+% Einleitung
+\input{chapters/einleitung}
+
+% Hauptteil (mind. 2/3 der Arbeit) -- subdivided per Merkblatt 3.2:
+%   Forschungsstand -- Theorie -- Methodik -- Ergebnisse
+\input{chapters/forschungsstand}
+\input{chapters/theorie}
+\input{chapters/methodik}
+\input{chapters/ergebnisse}
+
+% Zusammenfassung / Fazit
+\input{chapters/zusammenfassung}
+
+% ---- Back matter -----------------------------------------------------------
+% Anhang
+\appendix
+\input{chapters/anhang}
+
+
+
+
+	
+% Literaturverzeichnis
+\clearpage
+\printbibliography[heading=bibintoc,title={Literaturverzeichnis}]
+
+% Eidesstattliche Erklärung (always last page, per Merkblatt 3.2)
+\clearpage
+\thispagestyle{empty}
+
+\section*{Eidesstattliche Erklärung}
+
+Ich erkläre hiermit gemäß § 6 Abs. 6 APO SoWi, dass ich die vorstehende Bachelor-/Masterarbeit selbstständig verfasst und keine anderen als die angegebenen Quellen und Hilfsmittel benutzt habe und die wörtlich oder inhaltlich übernommenen Stellen als solche kenntlich gemacht habe.
+
+\vspace{1em}
+
+Des Weiteren erkläre ich, dass die digitale Fassung der gedruckten Ausfertigung der Bachelor ausnahmslos in Inhalt und Wortlaut entspricht und dass zur Kenntnis genommen wurde, dass diese digitale Fassung einer durch Software unterstützten, anonymisierten Prüfung auf Plagiate unterzogen werden kann.
+
+\vfill
+
+\noindent
+\begin{minipage}[t]{0.42\textwidth}
+	\rule{\textwidth}{0.4pt}\\[-0.2em]
+	(Datum)
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.42\textwidth}
+	\rule{\textwidth}{0.4pt}\\[-0.2em]
+	(Unterschrift)
+\end{minipage}
+
+\end{document}
+
+\end{document}

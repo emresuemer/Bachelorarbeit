@@ -1,0 +1,157 @@
+% ---------------------------------------------------------------------------
+% Anhang (Merkblatt 3.2: alle Anlagen, auf die im Text verwiesen wird)
+%
+% Inhalt: Replikations- und Erweiterungsmaterialien. Jede Tabelle und jede
+% Abbildung der Arbeit wird hier auf die erzeugende Datei, den SOEPremote-Job
+% und das zurueckgesendete Listing zurueckgefuehrt.
+% ---------------------------------------------------------------------------
+\chapter{Anhang}
+\label{cha:anhang}
+
+% Dateinamen und DOIs stehen in \path{...}; ein wenig Dehnbarkeit an den
+% Trennstellen, damit lange Namen im Blocksatz nicht in den Rand laufen.
+\Urlmuskip=0mu plus 2mu
+\expandafter\def\expandafter\UrlBreaks\expandafter{\UrlBreaks\do\_}
+
+\section{Replikations- und Erweiterungsmaterialien}
+\label{app:material}
+
+Dieser Anhang dokumentiert, mit welchen Daten, welchem Code und in welcher Umgebung die Ergebnisse der Arbeit entstanden sind. Er soll drei Dinge leisten: Für jede Tabelle und jede Abbildung im Text soll erkennbar sein, welche Datei sie erzeugt hat. Es soll klar getrennt werden, was aus dem Originalcode der Autorinnen stammt, was eigene Portierung auf das Ferndatenverarbeitungssystem SOEPremote ist und was zur Erweiterung gehört. Und wer Zugang zu den Daten hat, soll den Weg von den Rohdaten über die Analysestichprobe bis zu den Tabellen nachlaufen können. Aus Datenschutzgründen enthält das Repository keine Mikrodaten und keine daraus abgeleiteten Datensätze, sondern ausschließlich Code, die vom DIW Berlin zurückgesendeten Listings und die daraus erstellten Ergebnistabellen.
+
+\subsection{Originalstudie und Replikationspaket}
+\label{app:original}
+
+Repliziert wird \textcite{Kanas:2023}, \emph{Greater local supply of language courses improves refugees' labor market integration}, erschienen in \emph{European Societies} (doi: \path{10.1080/14616696.2022.2096915}). Das Zusatzmaterial mit den Tabellen S1 bis S12 ist beim Verlag hinterlegt.\footnote{\url{https://www.tandfonline.com/doi/suppl/10.1080/14616696.2022.2096915}} Die Autorinnen stellen ihr Replikationspaket über das Open Science Framework bereit (doi: \path{10.17605/OSF.IO/XZ3V5}).\footnote{\url{https://doi.org/10.17605/OSF.IO/XZ3V5}} Es umfasst die Stata-Do-Dateien \path{00011} bis \path{00024}, die Konfigurationsdateien \path{config.do} und \path{_PROJECT_MASTER_.do}, eine Readme-Datei mit Stand vom 14.\,Juli 2022 sowie den Ordner \path{macro_orig/} mit den Quelldateien der Makrodaten.
+
+Das Paket ist nicht Teil des eigenen Repositories, da es sich um das veröffentlichte Werk der Autorinnen handelt. Jede portierte Do-Datei nennt in ihrem Kopfkommentar die Datei und die Zeilen des Originalpakets, auf denen sie beruht. Die einzigen Änderungen am Originalcode sind in \path{src/analyses/authors_package_fixes.diff} als Patch festgehalten. Sie betreffen Dateipfade, die Variablenobergrenze von Stata/BE und einen veralteten Befehl; keine dieser Änderungen greift in die Analyse ein.
+
+\subsection{Repository}
+\label{app:repository}
+
+Code, Listings und Ergebnisse liegen in einem öffentlichen Git-Repository.\footnote{\url{https://github.com/emresuemer/Bachelorarbeit}} Tabelle~\ref{tab:app-repo} gibt einen Überblick über die Ordnerstruktur.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Struktur des Repositories}
+  \label{tab:app-repo}
+  \small
+  \begin{tabularx}{\textwidth}{@{}lX@{}}
+    \toprule
+    Pfad & Inhalt \\
+    \midrule
+    \path{src/stata/remote/} & Die 26 auf SOEPremote ausgeführten Jobs der Replikation und der Erweiterung. Sie haben jedes Ergebnis dieser Arbeit erzeugt. \\
+    \addlinespace
+    \path{src/stata/local/} & Lokal lauffähige Do-Dateien: \path{fig01_course_supply.do} für Abbildung~\ref{fig:kursangebot} sowie zwei Diagnosen zur Redaktion der Regionalkennungen in der lokalen SOEP-Edition. \\
+    \addlinespace
+    \path{src/analyses/} & Was vom Replikationspaket im Repository verbleibt: der Patch \path{authors_package_fixes.diff}, das lokal erzeugte Kreis-Jahr-Panel \path{savedata/macro_data.dta}, die 22 Jobs unter \path{remote/jobs/}, die das Panel auf den Server übertragen haben, und die Werkzeuge unter \path{remote/tools/}. \\
+    \addlinespace
+    \path{results/transcripts/} & Die 26 Antwort-E-Mails des DIW Berlin im Original (\path{.eml}), eine je Job. Sie sind die Primärquelle jeder Zahl in den Tabellen und lassen sich lokal nicht neu erzeugen. \\
+    \addlinespace
+    \path{results/logs/} & Stata-Logs der lokalen Läufe (Kreis-Jahr-Panel, Abbildung~1). \\
+    \addlinespace
+    \path{thesis/} & Das LaTeX-Manuskript dieser Arbeit. Die Tabellen unter \path{thesis/tables/} wurden aus den Listings erstellt; der Kopfkommentar jeder Tabellendatei nennt den zugehörigen Job und das Listing. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsection{Verwendete Datensätze}
+\label{app:daten}
+
+\paragraph{SOEP-Core v36, Remote Edition.} Grundlage der Mikroanalysen ist das Sozio-oekonomische Panel in der Version SOEP-Core v36, Remote Edition \parencite{soep_core_v36r}. Der Zugriff erfolgte über SOEPremote, das Ferndatenverarbeitungssystem des Forschungsdatenzentrums SOEP am DIW Berlin. Die lokal verfügbare EU-Edition \parencite{soep_group_2021} kam für die Analysen nicht in Frage: In ihr ist jede Regionalkennung unterhalb der Bundesländer auf den Wert \path{-7} gesetzt, sodass die Kreiskennziffer (\path{kkz}) fehlt, aus der die Treatmentvariable gebildet wird. Genutzt wurden die SOEP-Dateien \path{ppathl}, \path{pl}, \path{biol}, \path{pgen}, \path{pequiv}, \path{hl}, \path{pbiospe}, \path{health}, \path{refugspell}, \path{regionl} und \path{bioregion}.
+
+\paragraph{IAB-BAMF-SOEP-Befragung von Geflüchteten.} Die Analysestichprobe besteht aus den Teilstichproben M3, M4 und M5 (\path{psample} 17 bis 19) der IAB-BAMF-SOEP-Befragung von Geflüchteten, die in SOEP-Core v36 enthalten sind. Die Originalstudie zitiert die Befragung zusätzlich als eigenständigen Datensatz \parencite{iab_bamf_soep_2021}.
+
+\paragraph{Makrodaten auf Kreisebene.} Alle Kreisdaten stammen aus öffentlich zugänglichen Quellen und liegen als Rohdateien im Ordner \path{macro_orig/} des Replikationspakets:
+\begin{itemize}
+  \item Integrationskursgeschäftsstatistik des BAMF, 2013 bis 2019: begonnene Kurse und ausgestellte Teilnahmeberechtigungen je Kreis, aus denen das Kursangebot (\path{course_opport}) gebildet wird;
+  \item Regionalstatistik der Statistischen Ämter des Bundes und der Länder: Bevölkerung, Ausländeranteil, Arbeitslosigkeit, Steuerkraft, Bruttoinlandsprodukt und Wahlergebnisse;
+  \item INKAR-Indikatoren des Bundesinstituts für Bau-, Stadt- und Raumforschung (BBSR), Auszüge vom Januar 2022, sowie die Leerstandsquoten des BBSR;
+  \item Königsteiner Schlüssel zur Verteilung der Asylsuchenden auf die Länder;
+  \item Verwaltungsgrenzen VG2500 des Bundesamts für Kartographie und Geodäsie (BKG) für die Kreiskarten in Abbildung~\ref{fig:kursangebot};
+  \item linguistische Nähe der Herkunftssprachen zum Deutschen nach Melitz und Toubal (2014), bereitgestellt vom CEPII.\footnote{\url{https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=19}} Diese beiden Dateien werden vom Paket benötigt, aber nicht mitgeliefert.
+\end{itemize}
+
+Aus diesen Quellen erzeugt die Do-Datei \path{00011_data_macro.do} der Autorinnen das Kreis-Jahr-Panel \path{macro_data.dta} mit 2.807 Zeilen (401 Kreise in sieben Jahren). Da es keine Personendaten enthält, ist es im Repository enthalten. Zwei Kreisvariablen des Originals, die Sorge über Zuwanderung (\path{concern_immigration}) und das ehrenamtliche Engagement (\path{volunt}), werden aus der SOEP-Datei \path{pl} auf Kreisebene aggregiert und lassen sich deshalb nur auf dem Server bilden (\path{12_soepvars_remote.do}).
+
+\subsection{Ablauf der Replikation}
+\label{app:ablauf}
+
+Die Replikation verläuft in vier Schritten. Die Zuordnung der Do-Dateien zu den Tabellen und Abbildungen der Arbeit zeigt Tabelle~\ref{tab:app-provenienz}.
+
+\paragraph{Lokale Vorverarbeitung.} Das Kreis-Jahr-Panel wird mit der unveränderten Do-Datei \path{00011_data_macro.do} lokal erzeugt (Log: \path{results/logs/00011_data_macro_date20260803.log}). Abbildung~\ref{fig:kursangebot} entsteht ebenfalls lokal aus \path{src/stata/local/fig01_course_supply.do}, da sie keine Mikrodaten benötigt.
+
+\paragraph{Übertragung des Panels.} SOEPremote nimmt keine Anhänge an; externe Daten gelangen nur über eingebettete \path{input}-Blöcke auf den Server, und eine E-Mail darf etwa 200 bis 250 Zeilen umfassen. Das Panel wurde daher auf die zwölf Kreisvariablen reduziert, die nach der Datenaufbereitung noch gelesen werden, als skalierte Ganzzahlen kodiert und in 18 Teile von höchstens 190 Zeilen zerlegt (\path{10_supply_part1} bis \path{18}). Auf dem Server wurden die Teile zusammengefügt (\path{11_supply_stack.do}), um die beiden aus dem SOEP gebildeten Kreisvariablen ergänzt (\path{12_soepvars_remote.do}) und zu \path{cty_supply.dta} zusammengesetzt (\path{13_supply_assemble.do}). Der Job \path{14_supply_check.do} prüft den Bestand gegen die lokal berechneten Kontrollwerte in \path{EXPECTED.txt}; \path{verify_payload.py} dekodiert die Jobs lokal zurück und vergleicht sie mit der Quelle.
+
+\begin{sloppypar}
+\paragraph{Datenaufbereitung auf SOEPremote.} Die Aufbereitung folgt den Do-Dateien \path{00012} bis \path{00014} des Originals, ist aber wegen des Zeilenlimits in zehn aufeinander aufbauende Jobs zerlegt. \path{merge_soep.do} führt die SOEP-Dateien zusammen und wählt die drei Geflüchteten-Teilstichproben aus (18.342 Personenjahre). Die Jobs \path{clean_outcomes.do} und \path{clean_geography.do} bilden die abhängigen Variablen, die Mechanismen und den Erstzuweisungskreis; \path{clean_county_merge.do} spielt das Kursangebot des Erstzuweisungskreises an und erzeugt so die Treatmentvariable. \path{clean_citizenship.do}, \path{clean_citizenship_tc.do}, \path{clean_lingprox.do} und \path{clean_confounders.do} kodieren Herkunftsland, sprachliche Nähe und die individuellen Kontrollvariablen; \path{clean_asylum.do} bereitet die Daten zum Asylverfahren und zur Wohnsitzauflage auf. \path{clean_sample.do} wendet die elf Ausschlusskriterien an und liefert Tabelle~\ref{tab:stichprobenselektion} sowie die Analysestichprobe mit 5.467 Personenjahren von 2.730 Personen. \path{impute_sample.do} führt die multiple Imputation mit 20 Imputationen durch.
+\end{sloppypar}
+
+\paragraph{Analysen und Nachbearbeitung.} Die Analysejobs lesen die imputierte Stichprobe und geben ihre Ergebnisse ausschließlich als Textlisting zurück. Die Jobs \path{tab04_intermediate_outcomes.do}, \path{tab05_mediation.do} und die drei \path{fig02}-Jobs wurden mit \path{make_23_jobs.py} aus der Vorlage \path{tab03_employment.do} erzeugt, damit alle Modelle dieselbe Spezifikation teilen. Da Grafiken SOEPremote nicht verlassen können, liefern die \path{fig02}-Jobs die Tabelle der marginalen Effekte zurück; die Panels von Abbildung~\ref{fig:ame-aufenthaltsdauer} wurden daraus lokal gezeichnet. Die LaTeX-Tabellen im Manuskript wurden aus den Listings erstellt; die einzige von Hand übertragene Tabelle ist Tabelle~\ref{tab:stichprobenselektion}.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Herkunft der Tabellen und Abbildungen}
+  \label{tab:app-provenienz}
+  \footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.1cm}>{\raggedright\arraybackslash}p{1.9cm}@{}}
+    \toprule
+    Exponat & Do-Datei (\path{src/stata/remote/}) & Vorlage im Originalpaket & Job \\
+    \midrule
+    \multicolumn{4}{@{}l}{\textit{Replikation}} \\
+    Abbildung~\ref{fig:kursangebot} & \path{local/fig01_course_supply.do} & \path{00011} & lokal \\
+    Tabelle~\ref{tab:stichprobenselektion} & \path{clean_sample.do} & \path{00013}, Teil E & 244563 \\
+    Tabelle~\ref{tab:deskriptiv} & \path{descriptives_micro.do} & \path{00022} & 244565 \\
+    Tabelle~\ref{tab:erwerbstaetigkeit} & \path{tab03_employment.do} & \path{00023}, Teil A & 244566 \\
+    Tabelle~\ref{tab:intermediaere-ergebnisse} & \path{tab04_intermediate_outcomes.do} & \path{00023}, Teil D & 244567 \\
+    Tabelle~\ref{tab:mediation} & \path{tab05_mediation.do} & \path{00023}, Teil C & 244598 \\
+    Abbildung~\ref{fig:ame-aufenthaltsdauer} & \path{fig02_proficiency.do}, \path{fig02_course_completion.do}, \path{fig02_certificate.do} & \path{00023}, Teil E & 244595,\newline 244601,\newline 244602 \\
+    \addlinespace
+    \multicolumn{4}{@{}l}{\textit{Erweiterung}} \\
+    Tabellen~\ref{tab:ext-asyl-deskriptiv}, \ref{tab:ext-asyl-uebergang} & \path{ext_asylum_moderator.do} & keine (eigene Entwicklung) & 244779 \\
+    Tabellen~\ref{tab:ext-asyl-erwerb}, \ref{tab:ext-asyl-erwerb-ame}, \ref{tab:ext-asyl-s6} & \path{ext_asyl_employment.do} & \path{00023}, Modell 1.1 & 244835 \\
+    Tabellen~\ref{tab:ext-asyl-mechanismen}, \ref{tab:ext-asyl-mechanismen-koef} & \path{ext_asyl_mediators_primary.do}, \path{ext_asyl_mediators_secondary.do}, \path{ext_asyl_participation.do} & \path{00023}, Teil D & 244836,\newline 244837,\newline 244840 \\
+    Tabelle~\ref{tab:ext-asyl-dreifach} & \path{ext_asyl_threeway.do} & \path{00023}, Teile A und D & 244839 \\
+    \bottomrule
+  \end{tabularx}
+
+  \vspace{0.75ex}
+  \parbox{\textwidth}{\footnotesize
+    \textit{Anmerkungen:} Die Vorlagen sind die Do-Dateien des Replikationspakets: \path{00011_data_macro.do}, \path{00013_data_clean.do}, \path{00022_descr_analyses_micro.do} und \path{00023_mult_analyses.do}. Die Spalte „Job“ nennt die Nummer des SOEPremote-Auftrags; das zugehörige Listing liegt unter \path{results/transcripts/src_stata_remote_<Do-Datei>.eml}. Die Nummerierung der Tabellen im Originalpaket weicht von der Publikation ab: Der Abschnitt \path{Table_2} in \path{00023} erzeugt Tabelle~3 der Publikation, \path{Table_4} erzeugt deren Tabelle~4 und \path{Table_3} deren Tabelle~5. Die Datenaufbereitung (Jobs 244554 bis 244564) und die Imputationsvariante der Erweiterung (\path{impute_sample_part.do}, Job 244834) erzeugen keine Exponate, sind aber Voraussetzung aller genannten Jobs.}
+\end{table}
+
+\subsection{Aufbau der Erweiterung}
+\label{app:erweiterung}
+
+Die Erweiterung prüft, ob der Aufenthaltsstatus den Zugang zum Treatment moderiert. Alle Jobs der Erweiterung tragen das Präfix \path{ext_} und verwenden dieselbe Modellspezifikation wie die Replikation, ergänzt um die Interaktion zwischen dem Kursangebot und dem Status des Asylantrags.
+
+\begin{itemize}
+  \item \path{impute_sample_part.do} portiert die zweite Imputation der Autorinnen (\path{00014}, Zeilen 240 bis 355), in der zusätzlich die Kursteilnahme (\path{int_course_part}) imputiert wird. Sie ist Voraussetzung für die Modelle zur Teilnahme.
+  \item \path{ext_asylum_moderator.do} ist die Voruntersuchung: Verteilung der Statusgruppen, Statuswechsel zwischen Erstbeobachtung und Erhebungsjahr und die Unabhängigkeit des Kursangebots vom Status (Tabellen~\ref{tab:ext-asyl-deskriptiv} und \ref{tab:ext-asyl-uebergang}).
+  \item \path{ext_asyl_employment.do} schätzt die Interaktion auf die Erwerbstätigkeit, einmal mit dem Status im Erhebungsjahr und einmal mit dem Status bei Erstbeobachtung. Das erste Modell entspricht Modell~1.1.9 in Tabelle~S6 des Zusatzmaterials und dient dem Abgleich mit der Publikation (Tabelle~\ref{tab:ext-asyl-s6}).
+  \item \path{ext_asyl_mediators_primary.do} (Deutschkenntnisse, Kursabschluss), \path{ext_asyl_mediators_secondary.do} (Zertifikat, Kontakthäufigkeit als Placebo) und \path{ext_asyl_participation.do} (Kursteilnahme) schätzen die Interaktion auf die Mechanismen aus Tabelle~\ref{tab:intermediaere-ergebnisse}.
+  \item \path{ext_asyl_threeway.do} ergänzt explorativ die Aufenthaltsdauer als dritten Interaktionsfaktor.
+\end{itemize}
+
+\subsection{Software und Ausführungsumgebung}
+\label{app:software}
+
+Lokal wurde Stata/BE 18.0 unter macOS verwendet, für die Abbildungen und die Aufbereitung der Listings Python~3 mit den Bibliotheken \path{pandas} und \path{matplotlib}. Die Jobs liefen auf SOEPremote unter Stata/MP 19.5. Sie wurden per E-Mail an \path{soep-exec@diw.de} gesendet; zurück kommt ausschließlich ein Textlisting, nie ein Datensatz. Aus diesem Grund sind alle Tabellen und Abbildungen lokal aus den Listings rekonstruiert. Über die Stata-Grundausstattung hinaus wurden die SSC-Pakete \path{carryforward}, \path{cleanplots}, \path{egenmore}, \path{estout}, \path{fre}, \path{iscogen}, \path{mif2dta}, \path{mimrgns}, \path{missings}, \path{shp2dta}, \path{spmap} und \path{unique} benötigt; auf dem Server sind die für die Jobs erforderlichen Pakete vorinstalliert.
+
+\begin{sloppypar}
+Drei Hilfsprogramme unter \path{src/analyses/remote/tools/} sichern die Übertragung: \path{preflight.py} prüft jeden Job vor dem Versand auf Befehle, die SOEPremote nicht zulässt, \path{check_clipboard.py} vergleicht die Prüfsumme der zu sendenden E-Mail mit der des Jobs, und \path{verify_payload.py} testet, ob das eingebettete Kreis-Jahr-Panel exakt wiederhergestellt wird.
+\end{sloppypar}
+
+\subsection{Abweichungen vom Originalcode}
+\label{app:abweichungen}
+
+Die Portierung auf SOEPremote machte einige technische Anpassungen nötig, die das Analysedesign unberührt lassen:
+\begin{itemize}
+  \item Statt eines durchlaufenden Skripts wurde der Code in 26 kurze Jobs zerlegt, die jeweils den Datensatz des vorherigen Jobs einlesen.
+  \item Befehle, die SOEPremote nicht zulässt, wurden ersetzt oder entfernt: \path{keep} und \path{drop} durch \path{soepkeep} und \path{soepdrop}; \path{log}, \path{list}, \path{putexcel} und \path{keepusing()} entfallen.
+  \item Von den 57 Kreisvariablen des Originalpanels wurden nur die zwölf übertragen, die nach der Datenaufbereitung noch gelesen werden; zwei weitere wurden auf dem Server gebildet.
+  \item Abbildungen wurden nicht in Stata, sondern lokal in Python aus den zurückgegebenen Werten gezeichnet.
+  \item Bei den imputierten Modellen weichen einzelne Koeffizienten geringfügig von den publizierten Werten ab (in Tabelle~\ref{tab:intermediaere-ergebnisse} um bis zu 0,3~Prozentpunkte). Das ist die Zufallskomponente von \path{mi impute chained}, nicht eine Folge der Portierung; die unimputierten Schritte, insbesondere die Stichprobenselektion, stimmen exakt überein.
+\end{itemize}
+
+Neben diesen technischen Abweichungen hat die Replikation vier Fehler in der Publikation aufgedeckt, die in Kapitel~\ref{cha:ergebnisse} erläutert werden: die vertauschte Beschriftung der Asylstatus-Zeilen in den Tabellen~2 bis~5, die Kreiszahlen zur Verdopplung der Teilnahmeberechtigungen (publiziert 165, davon 73; korrekt 142, davon 41), die fehlende Haupteffektzeile in Panel~A von Tabelle~4 sowie die Fallzahlen in Tabelle~S6 (5.473 Personenjahre und 2.732 Personen statt 5.467 und 2.730).

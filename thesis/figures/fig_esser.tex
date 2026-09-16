@@ -1,0 +1,81 @@
+
+
+	\begin{tikzpicture}[
+	x=12cm, y=8cm,                    % <- overall size of the plot
+	>={Latex[length=3mm,width=2mm]},
+	font=\normalsize,
+	case/.style={circle, fill, inner sep=2.4pt},
+	tick/.style={circle, fill, inner sep=1.4pt}
+	]
+	
+	%% ---------- adjustable parameters -------------------------------
+	\def\Cm{0.22}      % cost constant of the low-cost curve  C(L2)_-
+	\def\Cp{0.52}      % cost constant of the high-cost curve C(L2)_+
+	\def\Mp{0.80}      % M_+  high motivation
+	\def\Mz{0.44}      % M_0  medium motivation
+	\def\Mm{0.14}      % M_-  low motivation
+	\def\px{0.15}      % p    low  access x efficiency
+	\def\pplus{0.82}   % p_+  high access x efficiency
+	\def\ymax{1.30}    % top of the vertical axis
+	
+	%% ---------- axes -------------------------------------------------
+	\draw[->] (0,0) -- (0,\ymax);
+	\draw[->] (0,0) -- (1.16,0);
+	
+	\node[anchor=south west, align=left, inner sep=1pt] at (0.005,\ymax)
+	{U(L2)-U(L1)\\ Motivation};
+	\node[anchor=north west] at (1.085,-0.015) {$p(\mathrm{L2})$};
+	\node[anchor=north]      at (0.45,-0.06)   {Zugang $\cdot$ Effizienz};
+	
+	%% ---------- tick marks -------------------------------------------
+	\foreach \y/\lab in {\Mp/{$M_+$}, \Mz/{$M_0$}, \Mm/{$M_-$}}{
+		\node[tick] at (0,\y) {};
+		\node[anchor=east] at (-0.014,\y) {\lab};
+	}
+	\node[tick] at (\px,0)    {};
+	\node[tick] at (\pplus,0) {};
+	\node[anchor=north] at (0,-0.015)      {$0$};
+	\node[anchor=north] at (\px,-0.015)    {$p$};
+	\node[anchor=north] at (\pplus,-0.015) {$p_+$};
+	\node[anchor=north] at (1,-0.015)      {$1$};
+	
+	%% ---------- the two cost curves  C/p ------------------------------
+	% high-cost curve (dashed)
+	\draw[dashed, dash pattern=on 8pt off 6pt, samples=400, smooth,
+	domain={\Cp/\ymax}:1] plot (\x, {\Cp/\x});
+	% low-cost curve (solid)
+	\draw[samples=400, smooth,
+	domain={\Cm/\ymax}:1] plot (\x, {\Cm/\x});
+	
+	\node at (0.50,{\Cp/0.50-0.13}) {$C_+/p$};
+	\node at (0.50,{\Cm/0.50-0.09}) {$C_-/p$};
+	
+	%% ---------- right-hand end points, dotted vertical at p = 1 -------
+	\draw[dotted, thick] (1,0) -- (1,\ymax);
+	\node[tick] at (1,\Cp) {};
+	\node[tick] at (1,\Cm) {};
+	\node[anchor=west] at (1.02,\Cp) {$C(\mathrm{L2})_+$};
+	\node[anchor=west] at (1.02,\Cm) {$C(\mathrm{L2})_-$};
+	\node[anchor=west] at (1.02,{(\Cp+\Cm)/2}) {Kosten};
+	
+	%% ---------- region labels -----------------------------------------
+	\node at (0.66,1.14) {Spracherwerb};
+	\node[align=center] at (0.40,0.115) {kein\\ Spracherwerb};
+	
+	%% ---------- the six cases ------------------------------------------
+	\foreach \x/\y/\n in {0.175/\Mp/1, 0.175/\Mz/2, 0.175/\Mm/3,
+		\pplus/0.90/4, \pplus/\Mz/5, \pplus/\Mm/6}{
+		\node[case] at (\x,\y) {};
+		\node[anchor=east] at ({\x-0.022},\y) {\n};
+	}
+	
+	%% ---------- outer frame ---------------------------------------------
+	\draw ($(current bounding box.south west)+(-0.025,-0.02)$)
+	rectangle
+	($(current bounding box.north east)+(0.025,0.02)$);
+	
+\end{tikzpicture}
+
+
+	
+

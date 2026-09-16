@@ -1,0 +1,28 @@
+# Data (SOEP microdata, licence-restricted) and copyrighted literature
+data/
+reference/
+
+# Editorial working files, not part of the submission
+prompt.md
+pruefung/
+
+# LaTeX build artifacts (the PDF itself is tracked)
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+!results/logs/*.log
+
+# Local copies and OS files
+thesis/bachelorarbeit Kopie.pdf
+.DS_Store

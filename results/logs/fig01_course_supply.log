@@ -1,0 +1,782 @@
+--------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/emresuemer/Desktop/Bachelorarbeit-SS26/labour-market-integration/build/logs/fig01_course_s
+> upply.log
+  log type:  text
+ opened on:  13 Aug 2026, 00:03:48
+
+. 
+. 
+. ********************************************************************************
+. * 1. Panel A / B variables  — identical to 00021_descr_analyses_macro.do:62-126
+. ********************************************************************************
+. 
+. use "$indata/maps_courses.dta", clear
+
+. 
+.         * started integration courses between 2015-2016
+. 
+.         gen courses_2015 = courses_startet if year==2015
+(2,406 missing values generated)
+
+.         bysort kkz (year): egen courses_2015_max = max(courses_2015)
+
+.         replace courses_2015 = courses_2015_max
+(2,406 real changes made)
+
+.         drop courses_2015_max
+
+.         label var courses_2015 "Courses started 2015"
+
+. 
+.         gen courses_2016 = courses_startet if year==2016
+(2,406 missing values generated)
+
+.         bysort kkz (year): egen courses_2016_max = max(courses_2016)
+
+.         replace courses_2016 = courses_2016_max
+(2,406 real changes made)
+
+.         drop courses_2016_max
+
+.         label var courses_2016 "Courses started 2016"
+
+. 
+.         * issued vouchers for integration courses between 2015-2016
+. 
+.         gen eligible_2015 = eligible if year==2015
+(2,406 missing values generated)
+
+.         bysort kkz (year): egen eligible_2015_max = max(eligible_2015)
+
+.         replace eligible_2015 = eligible_2015_max
+(2,406 real changes made)
+
+.         drop eligible_2015_max
+
+.         label var eligible_2015 "New course admissions in 2015"
+
+. 
+.         gen eligible_2016 = eligible if year==2016
+(2,406 missing values generated)
+
+.         bysort kkz (year): egen eligible_2016_max = max(eligible_2016)
+
+.         replace eligible_2016 = eligible_2016_max
+(2,406 real changes made)
+
+.         drop eligible_2016_max
+
+.         label var eligible_2016 "New course admissions 2016"
+
+. 
+.         keep if year == 2016
+(2,406 observations deleted)
+
+. 
+.         gen courses_change = round((courses_2016-courses_2015)/courses_2015*100)
+(11 missing values generated)
+
+.         replace courses_change = 0 if courses_2016 == 0 & courses_2015 == 0
+(5 real changes made)
+
+.         list kkz_name courses_2015 courses_2016 if courses_change >= .
+
+     +---------------------------------------------+
+     |              kkz_name   cou~2015   cou~2016 |
+     |---------------------------------------------|
+252. |              Landshut          0          2 |
+256. |       Straubing-Bogen          0          1 |
+264. | Neustadt a.d.Waldnaab          0          2 |
+268. |               Bamberg          0          1 |
+287. |    Erlangen-Höchstadt          0          2 |
+     |---------------------------------------------|
+304. |              Würzburg          0          1 |
+     +---------------------------------------------+
+
+.         * increase from 0 to 1 -> 100% increase
+.         * increase from 0 to 2 -> 200% increase
+.         replace courses_change = 100 if courses_2015 == 0 & courses_2016 == 1
+(3 real changes made)
+
+.         replace courses_change = 200 if courses_2015 == 0 & courses_2016 == 2
+(3 real changes made)
+
+.         assert courses_change < .
+
+. 
+.         gen eligible_change = round((eligible_2016-eligible_2015)/eligible_2015*100)
+
+.         assert eligible_change < .
+
+. 
+.         lab def change_aggr 1 "+50% or less" 2 "50%-100%" 3 "100%-150%" ///
+>                 4 "150%-200%" 5 "200%-300%" 6 "300% and more", replace
+
+. 
+.         recode courses_change (301/max = 6) (201/300 = 5) (151/200 = 4) ///
+>                 (101/150 = 3) (51/100 = 2) (min/50 = 5), gen(courses_change_aggr)
+(400 differences between courses_change and courses_change_aggr)
+
+.         lab val courses_change_aggr change_aggr
+
+.         label var courses_change "%-change courses started 2015-2016"
+
+. 
+.         recode eligible_change (301/max = 6) (201/300 = 5) (151/200 = 4) ///
+>                 (101/150 = 3) (51/100 = 2) (min/50 = 5), gen(eligible_change_aggr)
+(401 differences between eligible_change and eligible_change_aggr)
+
+.         lab val eligible_change_aggr change_aggr
+
+.         label var eligible_change_aggr "%-change voucher issued 2015-2016"
+
+. 
+.         tab eligible_change_aggr if year==2016, m
+
+     %-change |
+      voucher |
+       issued |
+    2015-2016 |      Freq.     Percent        Cum.
+--------------+-----------------------------------
+     50%-100% |         73       18.20       18.20
+    100%-150% |         89       22.19       40.40
+    150%-200% |         74       18.45       58.85
+    200%-300% |        113       28.18       87.03
+300% and more |         52       12.97      100.00
+--------------+-----------------------------------
+        Total |        401      100.00
+
+.         count if eligible_change_aggr >= 5 & eligible_change_aggr < . & year==2016
+  165
+
+.         * the increase in vouchers issued more than doubled in 165 counties
+.         * check an increase in started courses in those counties
+.         tab courses_change_aggr if eligible_change_aggr >= 5 & eligible_change_aggr < . & year==2016, m
+
+    RECODE of |
+courses_chang |
+            e |      Freq.     Percent        Cum.
+--------------+-----------------------------------
+     50%-100% |         43       26.06       26.06
+    100%-150% |         34       20.61       46.67
+    150%-200% |         15        9.09       55.76
+    200%-300% |         47       28.48       84.24
+300% and more |         26       15.76      100.00
+--------------+-----------------------------------
+        Total |        165      100.00
+
+.         count if courses_change_aggr >= 5 & courses_change_aggr < . & eligible_change_aggr >= 5 & eligible_c
+> hange_aggr & year==2016
+  73
+
+.         * the increase in supply of language courses in the affected counties more than doubled only in 73 c
+> ounties
+. 
+. 
+. ********************************************************************************
+. *** NEW *** 2. The authors' recode has an off-by-one; keep both, report both
+. ********************************************************************************
+. * The last rule of both recodes reads (min/50 = 5), but category 5 is labelled
+. * "200%-300%" and "+50% or less" is category 1. Stata's recode takes the first
+. * matching rule, so counties with growth <= 50% land in the same bin as counties
+. * with 200-300% growth. Consequence: the "165 counties" and "73 counties" quoted
+. * in the comments above -- and in the published text of the paper, p. 11 -- are
+. * inflated. Figure 1 itself is NOT affected: spmap classifies the continuous
+. * variables via clbreaks() and never reads the _aggr versions.
+. * Corrected versions below, under different names, so nothing above changes.
+. 
+.         recode courses_change (301/max = 6) (201/300 = 5) (151/200 = 4) ///
+>                 (101/150 = 3) (51/100 = 2) (min/50 = 1), gen(courses_change_bin)
+(399 differences between courses_change and courses_change_bin)
+
+.         lab val courses_change_bin change_aggr
+
+.         label var courses_change_bin "%-change courses started 2015-2016 (corrected bins)"
+
+. 
+.         recode eligible_change (301/max = 6) (201/300 = 5) (151/200 = 4) ///
+>                 (101/150 = 3) (51/100 = 2) (min/50 = 1), gen(eligible_change_bin)
+(401 differences between eligible_change and eligible_change_bin)
+
+.         lab val eligible_change_bin change_aggr
+
+.         label var eligible_change_bin "%-change vouchers issued 2015-2016 (corrected bins)"
+
+. 
+.         di as txt _n "{hline 78}"
+
+------------------------------------------------------------------------------
+
+.         di as txt "CORRECTED bin counts (authors' figures in parentheses)"
+CORRECTED bin counts (authors' figures in parentheses)
+
+.         di as txt "{hline 78}"
+------------------------------------------------------------------------------
+
+.         tab eligible_change_bin, m
+
+     %-change |
+     vouchers |
+       issued |
+    2015-2016 |
+   (corrected |
+        bins) |      Freq.     Percent        Cum.
+--------------+-----------------------------------
+ +50% or less |         23        5.74        5.74
+     50%-100% |         73       18.20       23.94
+    100%-150% |         89       22.19       46.13
+    150%-200% |         74       18.45       64.59
+    200%-300% |         90       22.44       87.03
+300% and more |         52       12.97      100.00
+--------------+-----------------------------------
+        Total |        401      100.00
+
+.         count if eligible_change_bin >= 5 & eligible_change_bin < .
+  142
+
+.         di as res "  ^ vouchers more than doubled in `r(N)' counties   (paper text: 165)"
+  ^ vouchers more than doubled in 142 counties   (paper text: 165)
+
+.         count if courses_change_bin >= 5 & courses_change_bin < . & ///
+>                  eligible_change_bin >= 5 & eligible_change_bin < .
+  41
+
+.         di as res "  ^ ...of which course supply also more than doubled in `r(N)'   (paper text: 73)"
+  ^ ...of which course supply also more than doubled in 41   (paper text: 73)
+
+.         di as txt "{hline 78}"
+------------------------------------------------------------------------------
+
+. 
+. 
+. ********************************************************************************
+. *** NEW *** 3. Print every county, and export the values for the Python map
+. ********************************************************************************
+. 
+.         format courses_change eligible_change %6.0f
+
+.         sort kkz
+
+. 
+.         di as txt _n "{hline 78}"
+
+------------------------------------------------------------------------------
+
+.         di as txt "FIGURE 1 -- per-county values, all 401 Kreise"
+FIGURE 1 -- per-county values, all 401 Kreise
+
+.         di as txt "  ARS   = official regional key, joins to the vg2500 shapefile"
+  ARS   = official regional key, joins to the vg2500 shapefile
+
+.         di as txt "  PanelA= courses_change, PanelB = eligible_change (percent)"
+  PanelA= courses_change, PanelB = eligible_change (percent)
+
+.         di as txt "{hline 78}"
+------------------------------------------------------------------------------
+
+.         list kkz ARS kkz_name courses_change eligible_change, noobs clean
+
+      kkz     ARS                                       kkz_name   course~e   eligi~ge  
+     1001   01001                               Flensburg, Stadt        207        168  
+     1002   01002                         Kiel, Landeshauptstadt        101         88  
+     1003   01003                             Lübeck, Hansestadt        149        179  
+     1004   01004                              Neumünster, Stadt        125         54  
+     1051   01051                                   Dithmarschen        271        170  
+     1053   01053                            Herzogtum Lauenburg         81        335  
+     1054   01054                                  Nordfriesland        150        147  
+     1055   01055                                    Ostholstein        200        228  
+     1056   01056                                      Pinneberg        111        102  
+     1057   01057                                           Plön        450        208  
+     1058   01058                          Rendsburg-Eckernförde        100        226  
+     1059   01059                            Schleswig-Flensburg        -20        209  
+     1060   01060                                       Segeberg         86        132  
+     1061   01061                                      Steinburg        156        191  
+     1062   01062                                       Stormarn        247        236  
+     2000   02000                  Hamburg, Freie und Hansestadt         55        105  
+     3101   03101                            Braunschweig, Stadt         61         31  
+     3102   03102                              Salzgitter, Stadt         71        146  
+     3103   03103                               Wolfsburg, Stadt         24         49  
+     3151   03151                                        Gifhorn         40        541  
+     3153   03153                                         Goslar        146        382  
+     3154   03154                                      Helmstedt         33        269  
+     3155   03155                                       Northeim        117        312  
+     3157   03157                                          Peine         30        114  
+     3158   03158                                   Wolfenbüttel        171        208  
+     3159   03159                                      Göttingen         68         89  
+     3241   03241                                Region Hannover         36         99  
+     3251   03251                                       Diepholz         38        181  
+     3252   03252                                 Hameln-Pyrmont        107        565  
+     3254   03254                                     Hildesheim         43        452  
+     3255   03255                                     Holzminden        333        550  
+     3256   03256                               Nienburg (Weser)         88        292  
+     3257   03257                                     Schaumburg         80        246  
+     3351   03351                                          Celle        108        285  
+     3352   03352                                       Cuxhaven        200        580  
+     3353   03353                                        Harburg         65        151  
+     3354   03354                              Lüchow-Dannenberg        100        138  
+     3355   03355                                       Lüneburg         81        173  
+     3356   03356                                      Osterholz        175        166  
+     3357   03357                              Rotenburg (Wümme)        122        364  
+     3358   03358                                     Heidekreis         86        112  
+     3359   03359                                          Stade         88        134  
+     3360   03360                                         Uelzen        400        273  
+     3361   03361                                         Verden        100        519  
+     3401   03401                             Delmenhorst, Stadt         36        147  
+     3402   03402                                   Emden, Stadt         83        141  
+     3403   03403                   Oldenburg (Oldenburg), Stadt         95        131  
+     3404   03404                               Osnabrück, Stadt         35         34  
+     3405   03405                           Wilhelmshaven, Stadt        117        228  
+     3451   03451                                      Ammerland         80        292  
+     3452   03452                                         Aurich         50         80  
+     3453   03453                                    Cloppenburg         45        259  
+     3454   03454                                        Emsland        110        259  
+     3455   03455                                      Friesland        120        379  
+     3456   03456                            Grafschaft Bentheim         44        104  
+     3457   03457                                           Leer        188        159  
+     3458   03458                                      Oldenburg        145        300  
+     3459   03459                                      Osnabrück         20        118  
+     3460   03460                                         Vechta        158        138  
+     3461   03461                                    Wesermarsch        100        218  
+     3462   03462                                       Wittmund         67        110  
+     4011   04011                                  Bremen, Stadt         46         50  
+     4012   04012                             Bremerhaven, Stadt        110        122  
+     5111   05111                              Düsseldorf, Stadt         65         54  
+     5112   05112                                Duisburg, Stadt         92        107  
+     5113   05113                                   Essen, Stadt         36        119  
+     5114   05114                                 Krefeld, Stadt         97        144  
+     5116   05116                         Mönchengladbach, Stadt         62         73  
+     5117   05117                     Mülheim an der Ruhr, Stadt         89        131  
+     5119   05119                              Oberhausen, Stadt        131        182  
+     5120   05120                               Remscheid, Stadt         19        240  
+     5122   05122                         Solingen, Klingenstadt         89        118  
+     5124   05124                               Wuppertal, Stadt         52        121  
+     5154   05154                                          Kleve         41        244  
+     5158   05158                                       Mettmann         55        242  
+     5162   05162                              Rhein-Kreis Neuss         94        151  
+     5166   05166                                        Viersen        114        383  
+     5170   05170                                          Wesel        134        167  
+     5314   05314                                    Bonn, Stadt         63         91  
+     5315   05315                                    Köln, Stadt         29        114  
+     5316   05316                              Leverkusen, Stadt         43         68  
+     5334   05334                            Städteregion Aachen         93        220  
+     5358   05358                                          Düren         35        255  
+     5362   05362                               Rhein-Erft-Kreis         61         80  
+     5366   05366                                     Euskirchen        129        121  
+     5370   05370                                      Heinsberg        136        121  
+     5374   05374                           Oberbergischer Kreis         71        258  
+     5378   05378                     Rheinisch-Bergischer Kreis         44        505  
+     5382   05382                               Rhein-Sieg-Kreis         70        116  
+     5512   05512                                 Bottrop, Stadt        114        130  
+     5513   05513                           Gelsenkirchen, Stadt         67        164  
+     5515   05515                                 Münster, Stadt         75         86  
+     5554   05554                                         Borken        114        182  
+     5558   05558                                       Coesfeld        320        286  
+     5562   05562                                 Recklinghausen         53        161  
+     5566   05566                                      Steinfurt        103        148  
+     5570   05570                                      Warendorf         86        160  
+     5711   05711                               Bielefeld, Stadt         24         42  
+     5754   05754                                      Gütersloh         51        105  
+     5758   05758                                        Herford        100        114  
+     5762   05762                                         Höxter        133        228  
+     5766   05766                                          Lippe         92        201  
+     5770   05770                                Minden-Lübbecke         91        126  
+     5774   05774                                      Paderborn         45        174  
+     5911   05911                                  Bochum, Stadt         71        202  
+     5913   05913                                Dortmund, Stadt         75         87  
+     5914   05914               Hagen, Stadt der FernUniversität         64         66  
+     5915   05915                                    Hamm, Stadt         38        122  
+     5916   05916                                   Herne, Stadt        144        181  
+     5954   05954                              Ennepe-Ruhr-Kreis         84        164  
+     5958   05958                             Hochsauerlandkreis        120        169  
+     5962   05962                               Märkischer Kreis         94        310  
+     5966   05966                                           Olpe        133        251  
+     5970   05970                            Siegen-Wittgenstein         75        202  
+     5974   05974                                          Soest         57        221  
+     5978   05978                                           Unna        100        211  
+     6411   06411                  Darmstadt, Wissenschaftsstadt         53         91  
+     6412   06412                       Frankfurt am Main, Stadt         17         23  
+     6413   06413                       Offenbach am Main, Stadt          5        -10  
+     6414   06414                    Wiesbaden, Landeshauptstadt         14         51  
+     6431   06431                                     Bergstraße        108        174  
+     6432   06432                              Darmstadt-Dieburg         47         99  
+     6433   06433                                     Groß-Gerau        -15         36  
+     6434   06434                                Hochtaunuskreis         50         77  
+     6435   06435                              Main-Kinzig-Kreis         73         97  
+     6436   06436                              Main-Taunus-Kreis        242        111  
+     6437   06437                                  Odenwaldkreis         67         64  
+     6438   06438                                      Offenbach         -1         43  
+     6439   06439                          Rheingau-Taunus-Kreis         31        154  
+     6440   06440                                  Wetteraukreis         86        225  
+     6531   06531                                         Gießen         63        255  
+     6532   06532                                Lahn-Dill-Kreis        127        388  
+     6533   06533                               Limburg-Weilburg         77        179  
+     6534   06534                             Marburg-Biedenkopf         79        237  
+     6535   06535                                Vogelsbergkreis        114        373  
+     6611   06611                        Kassel, documenta-Stadt         69        194  
+     6631   06631                                          Fulda        104        368  
+     6632   06632                             Hersfeld-Rotenburg         33         87  
+     6633   06633                                         Kassel        133        249  
+     6634   06634                             Schwalm-Eder-Kreis        120        343  
+     6635   06635                            Waldeck-Frankenberg         96        197  
+     6636   06636                            Werra-Meißner-Kreis        150        151  
+     7111   07111                      Koblenz, kreisfreie Stadt         53        195  
+     7131   07131                                      Ahrweiler        100         69  
+     7132   07132                      Altenkirchen (Westerwald)        100        241  
+     7133   07133                                  Bad Kreuznach        124        261  
+     7134   07134                                     Birkenfeld        260        179  
+     7135   07135                                    Cochem-Zell        267        417  
+     7137   07137                                  Mayen-Koblenz        115        259  
+     7138   07138                                        Neuwied         52        140  
+     7140   07140                           Rhein-Hunsrück-Kreis        188        197  
+     7141   07141                               Rhein-Lahn-Kreis         86        223  
+     7143   07143                                Westerwaldkreis         67        171  
+     7211   07211                        Trier, kreisfreie Stadt        117        141  
+     7231   07231                            Bernkastel-Wittlich         83         86  
+     7232   07232                        Eifelkreis Bitburg-Prüm        117        147  
+     7233   07233                                    Vulkaneifel         50        161  
+     7235   07235                                 Trier-Saarburg        600        161  
+     7311   07311          Frankenthal (Pfalz), kreisfreie Stadt         54         61  
+     7312   07312               Kaiserslautern, kreisfreie Stadt        113        210  
+     7313   07313          Landau in der Pfalz, kreisfreie Stadt       1300        550  
+     7314   07314        Ludwigshafen am Rhein, kreisfreie Stadt         28         43  
+     7315   07315                        Mainz, kreisfreie Stadt         39         91  
+     7316   07316   Neustadt an der Weinstraße, kreisfreie Stadt         91        115  
+     7317   07317                    Pirmasens, kreisfreie Stadt        100        242  
+     7318   07318                       Speyer, kreisfreie Stadt         77         49  
+     7319   07319                        Worms, kreisfreie Stadt         75         91  
+     7320   07320                  Zweibrücken, kreisfreie Stadt         45        122  
+     7331   07331                                    Alzey-Worms         67        164  
+     7332   07332                                   Bad Dürkheim         17        138  
+     7333   07333                               Donnersbergkreis         67        294  
+     7334   07334                                    Germersheim         60        304  
+     7335   07335                                 Kaiserslautern          0        287  
+     7336   07336                                          Kusel          0        165  
+     7337   07337                            Südliche Weinstraße        400        585  
+     7338   07338                              Rhein-Pfalz-Kreis         14        100  
+     7339   07339                                   Mainz-Bingen         88        202  
+     7340   07340                                   Südwestpfalz         50        239  
+     8111   08111                          Stuttgart, Stadtkreis         33         57  
+     8115   08115                                      Böblingen        105        205  
+     8116   08116                                      Esslingen         94        103  
+     8117   08117                                      Göppingen         88        134  
+     8118   08118                                    Ludwigsburg         82         95  
+     8119   08119                                Rems-Murr-Kreis         52         94  
+     8121   08121                          Heilbronn, Stadtkreis         57         70  
+     8125   08125                                      Heilbronn         86        130  
+     8126   08126                                 Hohenlohekreis        180        249  
+     8127   08127                                Schwäbisch Hall         57        135  
+     8128   08128                              Main-Tauber-Kreis         84        232  
+     8135   08135                                     Heidenheim         38         76  
+     8136   08136                                    Ostalbkreis         43         36  
+     8211   08211                        Baden-Baden, Stadtkreis          0         91  
+     8212   08212                          Karlsruhe, Stadtkreis          1         67  
+     8215   08215                                      Karlsruhe         66        310  
+     8216   08216                                        Rastatt        128        128  
+     8221   08221                         Heidelberg, Stadtkreis         14          2  
+     8222   08222                           Mannheim, Stadtkreis          1         -2  
+     8225   08225                          Neckar-Odenwald-Kreis        136        213  
+     8226   08226                             Rhein-Neckar-Kreis         76        191  
+     8231   08231                          Pforzheim, Stadtkreis         53         66  
+     8235   08235                                           Calw         50        146  
+     8236   08236                                       Enzkreis          0        171  
+     8237   08237                                   Freudenstadt        229        186  
+     8311   08311               Freiburg im Breisgau, Stadtkreis         47        127  
+     8315   08315                       Breisgau-Hochschwarzwald         47        182  
+     8316   08316                                    Emmendingen        147        316  
+     8317   08317                                   Ortenaukreis         55        134  
+     8325   08325                                       Rottweil        140        236  
+     8326   08326                         Schwarzwald-Baar-Kreis         26         64  
+     8327   08327                                     Tuttlingen         57        354  
+     8335   08335                                       Konstanz         68        128  
+     8336   08336                                        Lörrach         61        246  
+     8337   08337                                       Waldshut         71        176  
+     8415   08415                                     Reutlingen         87        110  
+     8416   08416                                       Tübingen        164        170  
+     8417   08417                                Zollernalbkreis         29         53  
+     8421   08421                                Ulm, Stadtkreis         55        147  
+     8425   08425                                Alb-Donau-Kreis        160        192  
+     8426   08426                                       Biberach         89        464  
+     8435   08435                                  Bodenseekreis         62        121  
+     8436   08436                                     Ravensburg         82        166  
+     8437   08437                                    Sigmaringen         44         38  
+     9161   09161                                     Ingolstadt         20         71  
+     9162   09162                      München, Landeshauptstadt         21         31  
+     9163   09163                               Rosenheim, Stadt         12         70  
+     9171   09171                                      Altötting        150         89  
+     9172   09172                           Berchtesgadener Land         22         66  
+     9173   09173                        Bad Tölz-Wolfratshausen        300        125  
+     9174   09174                                         Dachau         12         40  
+     9175   09175                                      Ebersberg        250        128  
+     9176   09176                                      Eichstätt         57        215  
+     9177   09177                                         Erding         54         72  
+     9178   09178                                       Freising         78        112  
+     9179   09179                               Fürstenfeldbruck         47         74  
+     9180   09180                         Garmisch-Partenkirchen        100         48  
+     9181   09181                              Landsberg am Lech        120        414  
+     9182   09182                                       Miesbach        500        115  
+     9183   09183                                 Mühldorf a.Inn         50        161  
+     9184   09184                                        München         85         81  
+     9185   09185                         Neuburg-Schrobenhausen        175        138  
+     9186   09186                           Pfaffenhofen a.d.Ilm        -40         62  
+     9187   09187                                      Rosenheim         56        103  
+     9188   09188                                      Starnberg        350        158  
+     9189   09189                                     Traunstein        100        132  
+     9190   09190                              Weilheim-Schongau         43        128  
+     9261   09261                                Landshut, Stadt         48         25  
+     9262   09262                                  Passau, Stadt         33         67  
+     9263   09263                                      Straubing         64         56  
+     9271   09271                                     Deggendorf         78         63  
+     9272   09272                               Freyung-Grafenau        167        122  
+     9273   09273                                        Kelheim         94        151  
+     9274   09274                                       Landshut        200         71  
+     9275   09275                                         Passau        250        123  
+     9276   09276                                          Regen        133        228  
+     9277   09277                                     Rottal-Inn        150        185  
+     9278   09278                                Straubing-Bogen        100         80  
+     9279   09279                              Dingolfing-Landau        140         38  
+     9361   09361                                         Amberg         70        175  
+     9362   09362                              Regensburg, Stadt         52        127  
+     9363   09363                                Weiden i.d.OPf.        110        191  
+     9371   09371                                Amberg-Sulzbach        250        337  
+     9372   09372                                           Cham        233        201  
+     9373   09373                              Neumarkt i.d.OPf.        144        212  
+     9374   09374                          Neustadt a.d.Waldnaab        200        343  
+     9375   09375                                     Regensburg        175        211  
+     9376   09376                                     Schwandorf        120        144  
+     9377   09377                                  Tirschenreuth        700        624  
+     9461   09461                                        Bamberg        100        215  
+     9462   09462                                Bayreuth, Stadt         67         48  
+     9463   09463                                  Coburg, Stadt        118         83  
+     9464   09464                                     Hof, Stadt        114        200  
+     9471   09471                                 Bamberg, Stadt         73        194  
+     9472   09472                                       Bayreuth          0        142  
+     9473   09473                                         Coburg        100        145  
+     9474   09474                                      Forchheim        129        265  
+     9475   09475                                            Hof          0        204  
+     9476   09476                                        Kronach        233        264  
+     9477   09477                                       Kulmbach         80        262  
+     9478   09478                                    Lichtenfels        225        133  
+     9479   09479                     Wunsiedel i.Fichtelgebirge        150        143  
+     9561   09561                                 Ansbach, Stadt        131        173  
+     9562   09562                                       Erlangen        131        127  
+     9563   09563                                   Fürth, Stadt         30         66  
+     9564   09564                                       Nürnberg         69         65  
+     9565   09565                                      Schwabach        100         75  
+     9571   09571                                        Ansbach        200        215  
+     9572   09572                             Erlangen-Höchstadt        200        149  
+     9573   09573                                          Fürth       -100         13  
+     9574   09574                                Nürnberger Land        263        207  
+     9575   09575               Neustadt a.d.Aisch-Bad Windsheim        280        204  
+     9576   09576                                           Roth        350        235  
+     9577   09577                        Weißenburg-Gunzenhausen        143        108  
+     9661   09661                           Aschaffenburg, Stadt         87        129  
+     9662   09662                             Schweinfurt, Stadt         82         88  
+     9663   09663                                Würzburg, Stadt         80         78  
+     9671   09671                                  Aschaffenburg          0        113  
+     9672   09672                                  Bad Kissingen         57        153  
+     9673   09673                                  Rhön-Grabfeld        150        286  
+     9674   09674                                       Haßberge        100        134  
+     9675   09675                                      Kitzingen          0         69  
+     9676   09676                                     Miltenberg        100         81  
+     9677   09677                                  Main-Spessart        111        207  
+     9678   09678                                    Schweinfurt          0        218  
+     9679   09679                                       Würzburg        100        127  
+     9761   09761                                Augsburg, Stadt         49         45  
+     9762   09762                                     Kaufbeuren         88        150  
+     9763   09763                               Kempten (Allgäu)         70         80  
+     9764   09764                                      Memmingen         67         96  
+     9771   09771                              Aichach-Friedberg        800        215  
+     9772   09772                                       Augsburg        275        112  
+     9773   09773                            Dillingen a.d.Donau        160        165  
+     9774   09774                                       Günzburg          0         75  
+     9775   09775                                        Neu-Ulm         79        205  
+     9776   09776                              Lindau (Bodensee)         50        141  
+     9777   09777                                      Ostallgäu        188        155  
+     9778   09778                                    Unterallgäu         29         89  
+     9779   09779                                     Donau-Ries        150        169  
+     9780   09780                                     Oberallgäu        160        100  
+    10041   10041                    Regionalverband Saarbrücken        108         96  
+    10042   10042                                  Merzig-Wadern        200         80  
+    10043   10043                                    Neunkirchen         81         71  
+    10044   10044                                      Saarlouis        209         73  
+    10045   10045                                Saarpfalz-Kreis        156         78  
+    10046   10046                                     St. Wendel        117         93  
+    11000   11000                                  Berlin, Stadt         45        124  
+    12051   12051                Brandenburg an der Havel, Stadt        214        406  
+    12052   12052                                 Cottbus, Stadt        333        423  
+    12053   12053                        Frankfurt (Oder), Stadt        133        288  
+    12054   12054                                 Potsdam, Stadt        136        187  
+    12060   12060                                         Barnim        200        348  
+    12061   12061                                Dahme-Spreewald        600        623  
+    12062   12062                                    Elbe-Elster        225        353  
+    12063   12063                                      Havelland        320        255  
+    12064   12064                              Märkisch-Oderland        114        208  
+    12065   12065                                      Oberhavel        288        193  
+    12066   12066                          Oberspreewald-Lausitz        188        969  
+    12067   12067                                     Oder-Spree        225        356  
+    12068   12068                             Ostprignitz-Ruppin        160        242  
+    12069   12069                             Potsdam-Mittelmark        450        133  
+    12070   12070                                       Prignitz        500        287  
+    12071   12071                                    Spree-Neiße        133        298  
+    12072   12072                                 Teltow-Fläming         83        426  
+    12073   12073                                      Uckermark        275        715  
+    13003   13003                                        Rostock        132        121  
+    13004   13004                                       Schwerin        165        181  
+    13071   13071                    Mecklenburgische Seenplatte        538        258  
+    13072   13072                              Landkreis Rostock        440         62  
+    13073   13073                               Vorpommern-Rügen        208        166  
+    13074   13074                            Nordwestmecklenburg        300        183  
+    13075   13075                          Vorpommern-Greifswald        311         86  
+    13076   13076                            Ludwigslust-Parchim        180        186  
+    14511   14511                                Chemnitz, Stadt         75        358  
+    14521   14521                                Erzgebirgskreis        220        200  
+    14522   14522                                  Mittelsachsen        500        158  
+    14523   14523                                  Vogtlandkreis        414        193  
+    14524   14524                                        Zwickau        210        196  
+    14612   14612                                 Dresden, Stadt         85        253  
+    14625   14625                                        Bautzen        133        114  
+    14626   14626                                        Görlitz         47         94  
+    14627   14627                                         Meißen        250        218  
+    14628   14628               Sächsische Schweiz-Osterzgebirge        129         97  
+    14713   14713                                 Leipzig, Stadt         75        134  
+    14729   14729                                        Leipzig        500        165  
+    14730   14730                                    Nordsachsen        217        110  
+    15001   15001                           Dessau-Roßlau, Stadt        190        192  
+    15002   15002                           Halle (Saale), Stadt        165        296  
+    15003   15003                    Magdeburg, Landeshauptstadt        179        166  
+    15081   15081                         Altmarkkreis Salzwedel        167        351  
+    15082   15082                              Anhalt-Bitterfeld        700        550  
+    15083   15083                                          Börde        300        405  
+    15084   15084                                Burgenlandkreis        170        284  
+    15085   15085                                           Harz         86        208  
+    15086   15086                                Jerichower Land        120        128  
+    15087   15087                               Mansfeld-Südharz        213        188  
+    15088   15088                                     Saalekreis        500        649  
+    15089   15089                                  Salzlandkreis        180        218  
+    15090   15090                                        Stendal        400        590  
+    15091   15091                                     Wittenberg        250        208  
+    16051   16051                                  Erfurt, Stadt        109         63  
+    16052   16052                                    Gera, Stadt        292        366  
+    16053   16053                                    Jena, Stadt        113        141  
+    16054   16054                                    Suhl, Stadt        125        121  
+    16055   16055                                  Weimar, Stadt        175        210  
+    16056   16056                                Eisenach, Stadt        350        236  
+    16061   16061                                      Eichsfeld        400        543  
+    16062   16062                                     Nordhausen        450       1171  
+    16063   16063                                  Wartburgkreis         67        176  
+    16064   16064                          Unstrut-Hainich-Kreis        567        385  
+    16065   16065                                Kyffhäuserkreis        500        257  
+    16066   16066                         Schmalkalden-Meiningen        467        257  
+    16067   16067                                          Gotha        100        174  
+    16068   16068                                       Sömmerda        500        521  
+    16069   16069                                 Hildburghausen         50        390  
+    16070   16070                                      Ilm-Kreis         56        225  
+    16071   16071                                  Weimarer Land        225        169  
+    16072   16072                                      Sonneberg        550        365  
+    16073   16073                            Saalfeld-Rudolstadt        550        169  
+    16074   16074                           Saale-Holzland-Kreis          0        118  
+    16075   16075                               Saale-Orla-Kreis        225        154  
+    16076   16076                                          Greiz        233        108  
+    16077   16077                               Altenburger Land        320        252  
+
+. 
+.         count
+  401
+
+.         local n_cty = r(N)
+
+.         di as res "Counties written: `n_cty'  (expected 401)"
+Counties written: 401  (expected 401)
+
+.         assert `n_cty' == 401
+
+. 
+.         * Checksums -- compare against results/verification/fig01_expected.md, which is
+.         * computed from the same .dta by an independent Python path. Reported, NOT
+.         * asserted: on a mismatch you want the CSV written so you can inspect it.
+.         * NB the reference must use Stata's rounding rule (half away from zero);
+.         * numpy.round is half-to-even and disagrees on four counties.
+.         summarize courses_change
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+courses_ch~e |        401    136.6658    139.6927       -100       1300
+
+.         local ck_a = r(sum)
+
+.         summarize eligible_change
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+eligible_c~e |        401    189.6135    135.6031        -10       1171
+
+.         local ck_b = r(sum)
+
+.         di as res _n "checksum Panel A sum(courses_change)  = `ck_a'   (expected 54803)"
+
+checksum Panel A sum(courses_change)  = 54803   (expected 54803)
+
+.         if `ck_a' != 54803 di as err "  ^ MISMATCH -- do not use these values"
+
+.         di as res    "checksum Panel B sum(eligible_change) = `ck_b'   (expected 76035)"
+checksum Panel B sum(eligible_change) = 76035   (expected 76035)
+
+.         if `ck_b' != 76035 di as err "  ^ MISMATCH -- do not use these values"
+
+.         if `ck_a' == 54803 & `ck_b' == 76035 di as res "both checksums OK"
+both checksums OK
+
+. 
+.         preserve
+
+.                 keep  id kkz ARS GEN kkz_name NUTS_NAME x_c y_c ///
+>                       courses_2015 courses_2016 courses_change courses_change_aggr courses_change_bin ///
+>                       eligible_2015 eligible_2016 eligible_change eligible_change_aggr eligible_change_bin
+
+.                 order id kkz ARS GEN kkz_name NUTS_NAME x_c y_c ///
+>                       courses_2015 courses_2016 courses_change courses_change_aggr courses_change_bin ///
+>                       eligible_2015 eligible_2016 eligible_change eligible_change_aggr eligible_change_bin
+
+.                 * nolabel: write the numeric codes of the *_aggr / *_bin variables rather
+.                 * than their value labels, so the CSV is machine-readable and diffs
+.                 * exactly against the Python reference. The labels are in the codebook at
+.                 * results/verification/fig01_expected.md.
+.                 export delimited using "$tabout/fig01_county_values.csv", replace nolabel
+file /Users/emresuemer/Desktop/Bachelorarbeit-SS26/labour-market-integration/build/tables/fig01_county_values.
+> csv saved
+
+.                 di as res "wrote $tabout/fig01_county_values.csv"
+wrote /Users/emresuemer/Desktop/Bachelorarbeit-SS26/labour-market-integration/build/tables/fig01_county_values
+> .csv
+
+.         restore
+
+. 
+. 
+. ********************************************************************************
+. * 4. The original spmap choropleths  — 00021:132-189, unchanged except paths
+. *    OPT-IN, and OFF by default. spmap renders 61,222 polygon coordinates and on
+. *    2026-08-12 sat for >13 minutes without producing a file or advancing the log,
+. *    while everything above it finished in seconds. The Python map is the primary
+. *    route anyway. To attempt it:   global fig01_drawmaps 1
+. *    Everything the analysis produces is already written above this point, so
+. *    interrupting here loses nothing.
+. ********************************************************************************
+. 
+. if "$fig01_drawmaps" != "1" {
+.         di as txt _n "Section 4 (spmap choropleths) skipped -- opt in with:"
+
+Section 4 (spmap choropleths) skipped -- opt in with:
+.         di as txt    "    global fig01_drawmaps 1"
+    global fig01_drawmaps 1
+.         di as res _n "fig01_course_supply.do -- done."
+
+fig01_course_supply.do -- done.
+.         log close
+      name:  <unnamed>
+       log:  /Users/emresuemer/Desktop/Bachelorarbeit-SS26/labour-market-integration/build/logs/fig01_course_s
+> upply.log
+  log type:  text
+ closed on:  13 Aug 2026, 00:03:52
+--------------------------------------------------------------------------------------------------------------

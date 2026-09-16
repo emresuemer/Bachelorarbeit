@@ -1,0 +1,131 @@
+%==============================================================================%
+% tab01_sample_selection.tex
+%
+% Purpose : Tabelle 1 der Replikation - Stichprobenselektion von der Ausgangs-
+%           zur Analysestichprobe. Entspricht Table 1 in Kanas & Kosyakova,
+%           S. 15 (Bib-Key: Kanas:2023). Zweite (optionale) Tabelle: direkter
+%           Abgleich publizierte Werte vs. Replikation.
+% Source  : SOEPremote job 244563, src/stata/remote/clean_sample.do, 2026-08-13
+%           Rohlisting: build/logs/src_stata_remote_clean_sample.do.eml
+%           Transkript: results/comparisons/tab01_sample_funnel.md
+% Needs   : booktabs, tabularx  (beide bereits in bachelorarbeit.sty geladen)
+% Usage   : \input{tables/tab01_sample_selection}
+% Author  : Emre Suemer, 2026-08-13
+%
+% Zahlformat: deutsch (Punkt als Tausendertrennzeichen), passend zur
+% ngerman-Sprachumgebung der Arbeit. Fuer englische Formatierung die Punkte
+% in den Zahlen durch Kommata ersetzen.
+%
+% Zitation: verweist auf den Bib-Eintrag Kanas:2023 in literatur.bib.
+%==============================================================================%
+
+% Kriterienspalte: linksbuendig (ohne \raggedright streckt tabularx die schmale
+% Spalte der Vergleichstabelle zu unschoenen Wortabstaenden) und mit haengendem
+% Einzug, damit Folgezeilen langer Kriterien unter dem Text und nicht am linken
+% Rand beginnen.
+\makeatletter
+\@ifundefined{NC@rewrite@Z}{%
+  \newcolumntype{Z}{>{\raggedright\arraybackslash\hangindent=1.9em\hangafter=1}X}%
+}{}
+\makeatother
+
+\begin{table}[htbp]
+  \centering
+  \caption{Stichprobenselektion: Ausschl\"usse von der Ausgangs- zur Analysestichprobe}
+  \label{tab:stichprobenselektion}
+  \small
+  \begin{tabularx}{\textwidth}{@{}Zrrrr@{}}
+    \toprule
+     & \multicolumn{2}{c}{Ausgeschlossen} & \multicolumn{2}{c}{Verbleibend} \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
+    Kriterium & Pers. & Pers.-Jahre & Pers. & Pers.-Jahre \\
+    \midrule
+    Ausgangsstichprobe                                          & --    & --     & 8.321 & 18.342 \\
+    \addlinespace
+    \quad -- Nichtgefl\"uchteten-Fragebogen erhalten            &    78 &    105 & 8.243 & 18.237 \\
+    \quad -- Erstbefragung nicht in den ersten zwei Aufenthaltsjahren
+                                                                & 1.622 &  2.953 & 6.621 & 15.284 \\
+    \quad -- Zuweisungskreis unbekannt                          &   695 &  1.542 & 5.926 & 13.742 \\
+    \quad -- Alter bei Erstbefragung $<$ 18 oder $>$ 64         &    62 &    118 & 5.864 & 13.624 \\
+    \quad -- Staatsangeh\"origkeit fehlend                      &     1 &      1 & 5.863 & 13.623 \\
+    \quad -- Ohne Asylantrag (Resettlement)                     &   176 &    362 & 5.687 & 13.261 \\
+    \quad -- Mehr als ein Asylantrag                            &   229 &    469 & 5.458 & 12.792 \\
+    \quad -- Inkonsistente Antrags-, Ankunfts- oder Entscheidungsdaten
+                                                                &    15 &     40 & 5.443 & 12.752 \\
+    \quad -- Nicht der restriktiven Wohnsitzauflage unterliegend
+                                                                & 2.713 &  7.279 & 2.730 &  5.473 \\
+    \quad -- Gewicht fehlend oder null                          &     0 &      6 & 2.730 &  5.467 \\
+    \midrule
+    \textbf{Analysestichprobe}                                  &       &        & \textbf{2.730} & \textbf{5.467} \\
+    \bottomrule
+  \end{tabularx}
+
+  \vspace{0.75ex}
+  \parbox{\textwidth}{\footnotesize
+    \textit{Anmerkungen:} Eigene Berechnung auf Basis der IAB-BAMF-SOEP-Befragung
+    von Gefl\"uchteten, SOEP-Core v36 (Remote Edition,
+    doi:\,10.5684/soep.core.v36r), Teilstichproben M3, M4 und M5. Ausf\"uhrung
+    \"uber das Ferndatenverarbeitungssystem SOEPremote des FDZ-SOEP am DIW Berlin
+    (Job 244563, 13.08.2026). Die Ausschl\"usse werden in der angegebenen
+    Reihenfolge angewendet; die Spalten \glqq Verbleibend\grqq{} geben den Umfang
+    nach dem jeweiligen Schritt an. S\"amtliche Werte stimmen exakt mit
+    Tabelle~1 in \textcite{Kanas:2023} \"uberein.%
+    % Die Vergleichstabelle unten ist per \iffalse deaktiviert. Wird sie wieder
+    % aktiviert, hier anfuegen:
+    %   {} (vgl.\ Tabelle~\ref{tab:stichprobenselektion_vergleich})
+    }
+\end{table}
+
+
+%------------------------------------------------------------------------------%
+% Optionale Vergleichstabelle (z.B. fuer den Anhang). Zeigt, dass die
+% Replikation die publizierten Werte in allen 22 Zellen exakt trifft.
+%------------------------------------------------------------------------------%
+
+\iffalse
+\begin{table}[htbp]
+  \centering
+  \caption{Abgleich der Stichprobenselektion mit den publizierten Werten}
+  \label{tab:stichprobenselektion_vergleich}
+  \small
+  \setlength{\tabcolsep}{4pt}%
+  \begin{tabularx}{\textwidth}{@{}Zrrrrc@{}}
+    \toprule
+     & \multicolumn{2}{c}{Publiziert} & \multicolumn{2}{c}{Replikation} & \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
+    Kriterium & Pers. & P.-Jahre & Pers. & P.-Jahre & Diff. \\
+    \midrule
+    Ausgangsstichprobe                                          & 8.321 & 18.342 & 8.321 & 18.342 & 0 \\
+    \addlinespace
+    \quad -- Nichtgefl\"uchteten-Fragebogen erhalten            &    78 &    105 &    78 &    105 & 0 \\
+    \quad -- Erstbefragung nicht in den ersten zwei Aufenthaltsjahren
+                                                                & 1.622 &  2.953 & 1.622 &  2.953 & 0 \\
+    \quad -- Zuweisungskreis unbekannt                          &   695 &  1.542 &   695 &  1.542 & 0 \\
+    \quad -- Alter bei Erstbefragung $<$ 18 oder $>$ 64         &    62 &    118 &    62 &    118 & 0 \\
+    \quad -- Staatsangeh\"origkeit fehlend                      &     1 &      1 &     1 &      1 & 0 \\
+    \quad -- Ohne Asylantrag (Resettlement)                     &   176 &    362 &   176 &    362 & 0 \\
+    \quad -- Mehr als ein Asylantrag                            &   229 &    469 &   229 &    469 & 0 \\
+    \quad -- Inkonsistente Antrags-, Ankunfts- oder Entscheidungsdaten
+                                                                &    15 &     40 &    15 &     40 & 0 \\
+    \quad -- Nicht der restriktiven Wohnsitzauflage unterliegend
+                                                                & 2.713 &  7.279 & 2.713 &  7.279 & 0 \\
+    \quad -- Gewicht fehlend oder null                          &     0 &      6 &     0 &      6 & 0 \\
+    \midrule
+    \textbf{Analysestichprobe}                                  & \textbf{2.730} & \textbf{5.467}
+                                                                & \textbf{2.730} & \textbf{5.467} & \textbf{0} \\
+    \bottomrule
+  \end{tabularx}
+
+  \vspace{0.75ex}
+  \parbox{\textwidth}{\footnotesize
+    \textit{Anmerkungen:} Publizierte Werte aus Tabelle~1 in
+    \textcite[15]{Kanas:2023}. Die Replikation reproduziert nicht nur die End-,
+    sondern auch s\"amtliche Zwischenwerte der Selektionskette. Die Zeile
+    \glqq Erstbefragung nicht in den ersten zwei Aufenthaltsjahren\grqq{} ist im
+    Original als \glqq refugees with an initial interview in their first two years
+    of residence in Germany\grqq{} bezeichnet; ausgeschlossen wird tats\"achlich
+    das Komplement, also Personen, deren Erstbefragung \emph{au{\ss}erhalb} dieses
+    Zeitfensters lag (\texttt{keep if dur1styr <= 2}). Es handelt sich um einen
+    Bezeichnungsfehler ohne Auswirkung auf die Fallzahlen.}
+\end{table}
+\fi

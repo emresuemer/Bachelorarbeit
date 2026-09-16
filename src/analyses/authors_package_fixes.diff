@@ -1,0 +1,324 @@
+# Local fixes applied to the authors' replication package
+#
+# Kanas, A., & Kosyakova, Y. (2022), replication package from OSF:
+# https://doi.org/10.17605/OSF.IO/XZ3V5  (files as downloaded 2026-07-18)
+#
+# Apply from the repository root after placing the OSF package in src/analyses/:
+#     git apply src/analyses/authors_package_fixes.diff
+#
+# Every hunk is a replication-environment fix, not an analytical change:
+# absolute paths for this machine (config.do), Stata/BE's 2,048-variable cap
+# (`capture set maxvar`, restricted `use varlist using pl.dta` reads, temp-file
+# merges), `dropmiss` -> `missings dropvars`, `capture noisily` on two oversized
+# diagnostic tabulations, `kkz > 0` in two merge-completeness asserts, and
+# `xtset` refreshes before `xtsum` in the sample funnel. Each is explained in
+# docs/lab_notebook.md, "Known replication-environment fixes (Stata/BE 18)".
+#
+diff --git a/src/analyses/00011_data_macro.do b/src/analyses/00011_data_macro.do
+index 30ae8c2..faf9eea 100644
+--- a/src/analyses/00011_data_macro.do
++++ b/src/analyses/00011_data_macro.do
+@@ -2477,7 +2477,8 @@ save $dataout/vac_hous.dta, replace
+ ********************************************************************************
+ ********************************************************************************
+ 
+-use $SOEPv36/pl.dta, clear
++* Stata/BE's 2,048-variable cap can't hold the full pl.dta; only these vars are used below
++use pid hid syear plj0046 pli0096_h using $SOEPv36/pl.dta, clear
+ keep if syear >= 2013
+ merge 1:1 pid syear using $SOEPv36/ppathl.dta, keepusing(migback phrf)
+ keep if _merge != 2
+diff --git a/src/analyses/00012_data_merge.do b/src/analyses/00012_data_merge.do
+index 5a0e4e9..e2ad9b0 100644
+--- a/src/analyses/00012_data_merge.do
++++ b/src/analyses/00012_data_merge.do
+@@ -109,33 +109,76 @@ http://about.paneldata.org/soep/dtc/data-structure.html
+ *** merge with $pl 
+ ********************************************************************************
+ 
+-	merge 1:1 pid syear using $SOEPv36/pl.dta
++	* Stata/BE's 2,048-variable cap can't hold the full pl.dta, even transiently — merge's
++	* keepusing() filters only AFTER reading the whole using file, so it doesn't help here.
++	* Pre-extract just the needed variables with a restricted `use`, which reads only
++	* those columns off disk, then merge against that narrow temp file instead.
++	preserve
++	use pid syear plb0022_h plb0424_v2 ple0008 plj0071 plj0072 plj0073 plj0499 plj0504 ///
++		plj0506 plj0508 plj0513 plj0515 plj0517 plj0522 plj0524 plj0526 plj0531 plj0533 ///
++		plj0535 plj0540 plj0542 plj0569 plj0626 plj0627 plj0629 plj0630 plj0654 plj0657 ///
++		plj0659_h plj0661 plj0663 plj0664 plj0665 plj0666 plj0667 plj0668 plj0669 plj0670 ///
++		plj0674 plj0675 plj0676 plj0677 plm0512 plm0513 plm0518i01 plm0518i02 plm0518i03 ///
++		plm0518i04 plm0518i05 plm0518i06 plm0524i03 plm0528 plm0529 plm0531i01 plm0531i02 ///
++		plm0567 plm0589i03 pmonin instrument p_anker using $SOEPv36/pl.dta, clear
++	save $dataout/pl_temp.dta, replace
++	restore
++
++	merge 1:1 pid syear using $dataout/pl_temp.dta
+ 	keep if _merge == 3
+ 	drop _merge
+ 	isid pid syear
++	erase $dataout/pl_temp.dta
+ 
+ ********************************************************************************
+-*** merge with $biol 
++*** merge with $biol
+ ********************************************************************************
+-	merge 1:1 pid syear syear using $SOEPv36/biol.dta
++	preserve
++	use pid syear l_nuts1 l_nuts1_ew l_nuts1info lb0183 lb0187 lb0228 lb0248 lb1231 ///
++		lb1232 lb1233 lb1246 lb1247_v1 lb1247_v2 lb1247_v3 lb1247_v4 lb1248 lb1305 ///
++		lm0076i01 lm0076i02 lm0076i03 lm0076i04 lm0076i05 lm0076i06 lm0076i07 lm0076i08 ///
++		lm0076i09 lm0076i10 lm0076i11 lm0076i12 lm0076i13 lm0076i14 lm0128i01 lm0128i02 ///
++		lm0128i03 lr2074 lr3032 lr3033_h lr3033_v1 lr3033_v2 lr3034 lr3048 lr3076 lr3122 ///
++		lr3123 lr3124 lr3125 lr3126 lr3127 lr3128 lr3129 lr3132 lr3133 lr3134 lr3135 ///
++		lr3235 lr3367 lr3485 lr3486 lr3487 lr3488 lr3489 lr3490 lr3491 lr3492 lr3493 ///
++		lr3494 lr3495 lr3496 lr3497 lr3498 lr3499 instrument p_anker using ///
++		$SOEPv36/biol.dta, clear
++	save $dataout/biol_temp.dta, replace
++	restore
++
++	merge 1:1 pid syear syear using $dataout/biol_temp.dta
+ 	drop if _merge==2
+ 	drop _merge
++	erase $dataout/biol_temp.dta
+ 
+ ********************************************************************************
+-*** merge with $pgen 
++*** merge with $pgen
+ ********************************************************************************
+-	merge 1:1 pid syear syear using $SOEPv36/pgen.dta
++	preserve
++	use pid syear pgfamstd pgisco08 pglabgro pglabnet pgnation pgpbbila pgpsbila ///
++		using $SOEPv36/pgen.dta, clear
++	save $dataout/pgen_temp.dta, replace
++	restore
++
++	merge 1:1 pid syear syear using $dataout/pgen_temp.dta
+ 	drop if _merge==2
+ 	drop _merge
+ 	isid pid syear
++	erase $dataout/pgen_temp.dta
+ 
+ ********************************************************************************
+-*** merge with $pequiv 
++*** merge with $pequiv
+ ********************************************************************************
+-	merge 1:1 pid syear syear using $SOEPv36/pequiv.dta
++	preserve
++	use pid syear d11107 using $SOEPv36/pequiv.dta, clear
++	save $dataout/pequiv_temp.dta, replace
++	restore
++
++	merge 1:1 pid syear syear using $dataout/pequiv_temp.dta
+ 	drop if _merge==2
+ 	drop _merge
+ 	isid pid syear
++	erase $dataout/pequiv_temp.dta
+ 
+ ********************************************************************************
+ *** retrieve from $pbiospe, i.e., gen spelldata
+@@ -167,9 +210,16 @@ http://about.paneldata.org/soep/dtc/data-structure.html
+ ********************************************************************************
+ *** merge with $hl 
+ ********************************************************************************
+-	merge m:1 hid syear using $SOEPv36/hl.dta
++	* hl.dta is also a wide long-format file (like pl.dta above) — same temp-file fix
++	preserve
++	use hid syear hlj0005_h using $SOEPv36/hl.dta, clear
++	save $dataout/hl_temp.dta, replace
++	restore
++
++	merge m:1 hid syear using $dataout/hl_temp.dta
+ 	drop if _merge==2
+ 	drop _merge
++	erase $dataout/hl_temp.dta
+ 
+ ********************************************************************************
+ *** prepare migration spells
+@@ -226,7 +276,7 @@ http://about.paneldata.org/soep/dtc/data-structure.html
+ *** drop irrelevant instruments
+ ********************************************************************************
+ 	* user-written
+-	dropmiss, force
++	missings dropvars, force
+ 	* own-written
+ 	irrelevant_instr
+ 
+diff --git a/src/analyses/00013_data_clean.do b/src/analyses/00013_data_clean.do
+index 060147e..25b0bb2 100644
+--- a/src/analyses/00013_data_clean.do
++++ b/src/analyses/00013_data_clean.do
+@@ -691,10 +691,15 @@ use $dataout/01_kos_merged_all.dta, clear
+ 		keepusing(graduates eligible nparticipants courses_startet courses_finished course_opport course_opport2)
+ 	keep if _merge != 2
+ 	tab year if _merge != 3 , m
+-	tab kkz year if _merge != 3 , m
++	* diagnostic only (not used downstream); year isn't restricted to 2013+ yet here, so
++	* the kkz x year cross-tab can exceed tabulate's cell limit (r(134)) - non-fatal
++	capture noisily tab kkz year if _merge != 3 , m
+ 		* rememeber that the data will be restricted to arrivals between 2014-2019 and nonmissing on county
+ 	tab kkz year if _merge != 3 & year>=2013 & year <., m
+-	assert _merge == 3 if year>=2013 & year <. & kkz < .
++	* kkz can carry SOEP missing-value codes (e.g. -7 "unknown"), which are not Stata
++	* system-missing and so aren't excluded by `kkz < .` alone; exclude them explicitly
++	* so the completeness check isn't tripped by counties that were never geocoded
++	assert _merge == 3 if year>=2013 & year <. & kkz > 0 & kkz < .
+ 
+ 	codebook eligible 
+ 		* number of individuals eligible to the course - vouchers given in the county/year
+@@ -740,10 +745,15 @@ use $dataout/01_kos_merged_all.dta, clear
+ 	merge m:1 kkz year using $dataout/macro_data.dta
+ 	keep if _merge != 2
+ 	tab year if _merge != 3 , m
+-	tab kkz year if _merge != 3 , m
++	* diagnostic only (not used downstream); year isn't restricted to 2013+ yet here, so
++	* the kkz x year cross-tab can exceed tabulate's cell limit (r(134)) - non-fatal
++	capture noisily tab kkz year if _merge != 3 , m
+ 		* rememeber that the data will be restricted to arrivals between 2014-2019 and nonmissing on county
+ 	tab kkz year if _merge != 3 & year>=2013 & year <., m
+-	assert _merge == 3 if year>=2013 & year <. & kkz < .
++	* kkz can carry SOEP missing-value codes (e.g. -7 "unknown"), which are not Stata
++	* system-missing and so aren't excluded by `kkz < .` alone; exclude them explicitly
++	* so the completeness check isn't tripped by counties that were never geocoded
++	assert _merge == 3 if year>=2013 & year <. & kkz > 0 & kkz < .
+ 	
+ 	drop graduates eligible nparticipants courses_startet courses_finished course_opport course_opport2
+ 
+@@ -776,7 +786,7 @@ ren (reg_unemplrate reg_area reg_pop reg_density foreign_share gdp gdp_per_emplo
+ 	al_vac_skill al_vac_unskill vac_exp vac_spec vac_skill vac_unskill ///
+ 	hospital_bet hospital_bet2012 unemp_for emp_for_nat shb2sh rentprice land_cons ///
+ 	concern_immigration volunt av_age ref_share_bev ref_share_for vac_hous vac_hous2012) init_=
+-	
++
+ 
+ 	drop year
+ 
+@@ -1801,7 +1811,10 @@ save $dataout/02_kos_coded_full.dta, replace
+ 
+ 	keep if kkz1st_miss == 0
+ 	*keep if nuts1_first < .
+-	xtsum pid 
++	* xtset's internal panel bookkeeping can go stale after a large `keep if` drop,
++	* causing xtsum to error "variable __0000xx not found" - re-declare to refresh it
++	xtset pid syear
++	xtsum pid
+ 	local n = r(n)
+ 	local N = r(N)
+ 	capture noisily  putexcel B`excel'= "`n'"
+@@ -1814,7 +1827,8 @@ save $dataout/02_kos_coded_full.dta, replace
+ *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+ 	capture noisily  putexcel A`excel'= "- aged <18 or >64 at the first interview"
+ 	keep if age1st >= 18 & age1st <= 64
+-	xtsum pid 
++	xtset pid syear
++	xtsum pid
+ 	local n = r(n)
+ 	local N = r(N)
+ 	capture noisily  putexcel B`excel'= "`n'"
+@@ -1825,7 +1839,8 @@ save $dataout/02_kos_coded_full.dta, replace
+ *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+ 	capture noisily  putexcel A`excel'= "- missing on origin (w/o stateless)"
+ 	keep if immigroup_nat <.
+-	xtsum pid 
++	xtset pid syear
++	xtsum pid
+ 	local n = r(n)
+ 	local N = r(N)
+ 	capture noisily  putexcel B`excel'= "`n'"
+@@ -1837,7 +1852,8 @@ save $dataout/02_kos_coded_full.dta, replace
+ *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+ 	capture noisily  putexcel A`excel'= "- w/o asylum request"
+ 	keep if noasylappl != 1
+-	xtsum pid 
++	xtset pid syear
++	xtsum pid
+ 	local n = r(n)
+ 	local N = r(N)
+ 	capture noisily  putexcel B`excel'= "`n'"
+@@ -1852,7 +1868,8 @@ save $dataout/02_kos_coded_full.dta, replace
+ 	// drop those with more than one request
+ 	capture noisily  putexcel A`excel'= "- more than one asylum request"
+ 	keep if asylappl1st == 1
+-	xtsum pid 
++	xtset pid syear
++	xtsum pid
+ 	local n = r(n)
+ 	local N = r(N)
+ 	capture noisily  putexcel B`excel'= "`n'"
+@@ -1865,8 +1882,9 @@ save $dataout/02_kos_coded_full.dta, replace
+ *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+ 	capture noisily  putexcel A`excel'= "cleaning on inconsistencies with application/arrival/decison dates"
+ 	keep if inconsistentdates != 1
+-	
+-	xtsum pid 
++
++	xtset pid syear
++	xtsum pid
+ 	local n = r(n)
+ 	local N = r(N)
+ 	capture noisily  putexcel B`excel'= "`n'"
+@@ -1880,7 +1898,8 @@ save $dataout/02_kos_coded_full.dta, replace
+ *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+ 	capture noisily  putexcel A`excel'= "- free to move or information missing"
+ 	keep if restr_mobility_itt == 1
+-	xtsum pid 
++	xtset pid syear
++	xtsum pid
+ 	local n = r(n)
+ 	local N = r(N)
+ 	capture noisily  putexcel B`excel'= "`n'"
+@@ -1893,7 +1912,8 @@ save $dataout/02_kos_coded_full.dta, replace
+ 	unique pid if weight_p <= 0 | weight_p >= .
+ 	drop if weight_p <= 0 | weight_p >= .
+ 	capture noisily  putexcel A`excel'= "–	observations with zero or missing weights"
+-	xtsum pid 
++	xtset pid syear
++	xtsum pid
+ 	local n = r(n)
+ 	local N = r(N)
+ 	capture noisily  putexcel B`excel'= "`n'"
+diff --git a/src/analyses/config.do b/src/analyses/config.do
+index 48b471a..a617bb9 100644
+--- a/src/analyses/config.do
++++ b/src/analyses/config.do
+@@ -29,10 +29,10 @@ capt log close _all	// close all log files
+ 
+ * upgrade
+ global version "A"	// version of revision
+-global workingDir ".../Analyses" // working directory (set to current working directory)
+-global SOEPv36 ".../SOEP-CORE_v36/SOEP-CORE.v36eu_STATA"
++global workingDir "/Users/emresuemer/Desktop/Bachelorarbeit-SS26/labour-market-integration/src/analyses" // working directory (set to current working directory)
++global SOEPv36 "/Users/emresuemer/Desktop/Bachelorarbeit-SS26/labour-market-integration/data/SOEP-CORE.v36eu_STATA"
+ global macro_orig "$workingDir/macro_orig"
+-global datageoIAB ".../IAB_BAMF_SOEP_Refugee/data/GEO" // available with an extra contract for data protection
++global datageoIAB "$SOEPv36/raw" // regionl.dta/bioregion.dta ship in our standard SOEP distribution
+ 
+ /**********************/
+ 
+@@ -45,6 +45,9 @@ cd "$workingDir" 			// change to working directory
+ 
+ capt mkdir "$tempDir" 		// create directory for temporary files (if not there)
+ capt mkdir "$logDir" 		// create directory for log files (if not there)
++capt mkdir "$dataout" 		// $tempDir/$logDir are never defined above, so the two mkdirs
++capt mkdir "$output" 		// are no-ops; create the directories actually used instead
++							// (both are git-ignored, so a fresh checkout has neither)
+ /*** do not edit here (end) ***/
+ 
+ set varabbrev off	// turn off stata's akward feature of abbreviating variable names
+@@ -53,7 +56,7 @@ global config = 1	// a flag that config file was executed already
+ 
+ clear matrix
+ clear mata
+-set maxvar 10000
++capture set maxvar 10000	// no-op on Stata/BE, where maxvar is fixed at 2,048
+ 
+ global date = string( d(`c(current_date)'), "%tdCYND" )
+ mac list date
+@@ -75,7 +78,7 @@ preserve
+                         if (`r(min)' ==-8 & `r(max)' ==-5) local vlist `vlist' `variable'
+             }
+ restore
+-drop `vlist'
++if "`vlist'" != "" drop `vlist'
+ d,s
+ end
+ 

@@ -1,0 +1,343 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% bamberg-thesis.sty
+%% Style package for a Bachelor's thesis (Bachelorarbeit)
+%% Fachgruppe Soziologie, Otto-Friedrich-Universitaet Bamberg
+%%
+%% Implements the binding formatting rules from
+%% "Merkblatt fuer Bachelorarbeiten, Fachgruppe Soziologie, Stand: Januar 2022".
+%%
+%% Engine: XeLaTeX or LuaLaTeX (uses fontspec).
+%% Bibliography: biblatex + biber (author-year, sociology in-text style).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bamberg-thesis}[2026/07/18 v1.0
+  Bachelorarbeit template, Fachgruppe Soziologie, Universitaet Bamberg]
+
+
+\newif\ifbamberg@apa
+\bamberg@apafalse
+\DeclareOption{soziologie}{\bamberg@apafalse}
+\DeclareOption{apa}{\bamberg@apatrue}
+\DeclareOption*{\PackageWarning{bamberg-thesis}{Unknown option '\CurrentOption'}}
+\ProcessOptions\relax
+
+
+
+%--------------------------------------------------------------------------------
+% 1) PAGE GEOMETRY  (Merkblatt 3.3)
+%    left 2.5cm, right 2.5cm, top 2.5cm, bottom 2cm, DIN A4.
+%--------------------------------------------------------------------------------
+\RequirePackage[a4paper,
+  left=2.5cm,
+  right=2.5cm,
+  top=2.5cm,
+  bottom=2cm,
+  headsep=1em,
+  footskip=1cm]{geometry}
+
+%--------------------------------------------------------------------------------
+% 2) LANGUAGE & HYPHENATION
+%    Main language German (correct German hyphenation patterns everywhere);
+%    English available as a secondary language for the abstract.
+%--------------------------------------------------------------------------------
+\RequirePackage[main=ngerman,english]{babel}
+
+%--------------------------------------------------------------------------------
+% 3) FONTS  (Merkblatt 3.3: Times New Roman, 12pt)
+%    TeX Gyre Termes is metric-compatible with Times New Roman and ships with
+%    every TeX distribution, so the template compiles anywhere. If the genuine
+%    Microsoft font is installed on your machine, swap the lines below.
+%    The 12pt body size is set via the class option (fontsize=12pt) in the
+%    main file.
+%--------------------------------------------------------------------------------
+\RequirePackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+
+%\setmainfont{TeX Gyre Termes}
+\setmainfont{texgyretermes}[
+Extension      = .otf,
+UprightFont    = *-regular,
+BoldFont       = *-bold,
+ItalicFont     = *-italic,
+BoldItalicFont = *-bolditalic,
+]
+
+% \setmainfont{Times New Roman}   % <- use this instead if you own the MS font
+
+%--------------------------------------------------------------------------------
+% 4) LINE SPACING  (Merkblatt 3.3: 1,5-zeilig)
+%--------------------------------------------------------------------------------
+%    The stretch factor must be deferred to \AtBeginDocument: scrhack (section 7)
+%    patches setspace for KOMA compatibility and, as a side effect, resets
+%    \baselinestretch to 1 at the start of the document -- so calling it here
+%    directly leaves the text single-spaced, silently and without any warning.
+%    Deferring also keeps this immune to a future reordering of the packages.
+%
+%    Why \setstretch{1.4276} and NOT setspace's own \onehalfspacing:
+%    the two definitions of "1,5-zeilig" do not agree, and \onehalfspacing is
+%    the narrower one.
+%      * \onehalfspacing at 12pt sets \baselineskip = 18.0pt, i.e. 1.5x the
+%        FONT SIZE.
+%      * Word's "1,5 Zeilen" is 1.5x the FONT'S OWN line height, which for
+%        Times New Roman (asc+desc+gap = 2355/2048 em) is 13.80pt at 12pt,
+%        hence 20.70pt.
+%    The Merkblatt's rule is written for Word, so 20.70pt is the target: a
+%    supervisor comparing the printout against a Word document set to
+%    "1,5 Zeilen" sees the same page. \onehalfspacing looked visibly tight
+%    (~13% too dense) for exactly this reason -- it was not a bug.
+%      1.4276 x 14.5pt (LaTeX's normal \baselineskip at 12pt) = 20.70pt.
+\RequirePackage{setspace}
+\AtBeginDocument{\setstretch{1.4276}}
+
+%--------------------------------------------------------------------------------
+% 4b) PARAGRAPH SPACING
+%--------------------------------------------------------------------------------
+%    The class option parskip=never (main file) gives indented paragraphs with
+%    no vertical gap. A small gap on top of the indent makes paragraph breaks
+%    easier to see in a long text; the indent is kept, so the document still
+%    reads as a conventional German thesis rather than a business report.
+%    Set inside \AtBeginDocument, after the stretch above, so 0.35\baselineskip
+%    is measured against the final 20.70pt -- about 7.2pt, frozen to a fixed
+%    length so it does not grow again inside larger-font material.
+\AtBeginDocument{\setlength{\parskip}{0.35\baselineskip plus 2pt}}
+
+%--------------------------------------------------------------------------------
+% 5) JUSTIFICATION + HYPHENATION  (Merkblatt 3.3: Blocksatz mit Silbentrennung)
+%    Justified text is the LaTeX default; microtype improves line breaking so the
+%    "unschoene Luecken" mentioned in the Merkblatt are minimised. (Under XeLaTeX
+%    microtype provides character protrusion, which is what matters here.)
+%--------------------------------------------------------------------------------
+\RequirePackage{microtype}
+
+%--------------------------------------------------------------------------------
+% 6) QUOTES  (German „..."), also required by csquotes/biblatex
+%--------------------------------------------------------------------------------
+\RequirePackage[autostyle=true]{csquotes}
+
+%--------------------------------------------------------------------------------
+% 7) GRAPHICS, TABLES, MISC
+%--------------------------------------------------------------------------------
+\RequirePackage{graphicx}
+\RequirePackage{booktabs}
+\RequirePackage{tabularx}
+\RequirePackage{caption}
+\RequirePackage{scrhack}       % silence KOMA warnings about float packages
+\RequirePackage{xcolor}
+\RequirePackage{amsmath}
+
+\RequirePackage{tikz}
+\usetikzlibrary{arrows.meta,calc}
+
+
+
+% Citations and the URLs/DOIs in the bibliography are coloured; cross-references
+% stay black, i.e. visually identical to the previous [hidelinks] setting. A
+% slightly darkened blue rather than pure blue, so it stays legible when the
+% thesis is printed in greyscale.
+\definecolor{citeblue}{RGB}{0,0,170}
+\RequirePackage[
+  colorlinks=true,
+  citecolor=citeblue,
+  urlcolor=citeblue,   % URLs and DOIs in the bibliography
+  linkcolor=black,     % \ref, \pageref, table of contents
+  pdfusetitle,
+]{hyperref}
+
+% Headings in the same serif family as the body (coherent with Times).
+\addtokomafont{disposition}{\rmfamily}
+
+% KOMA's default chapter style inserts a large vertical skip before the
+% heading (well beyond the 2.5cm top margin, Merkblatt 3.3). Zero it so
+% chapter titles start flush with the top margin, like body text does.
+\RedeclareSectionCommand[beforeskip=0pt]{chapter}
+
+%--------------------------------------------------------------------------------
+% 8) BIBLIOGRAPHY  (Merkblatt 3.4 + examples on p.5/7)
+%    Author-year, initials for given names, German localisation.
+%    The distinctive local convention -- page reference after a COLON, e.g.
+%    (Pappi 1976: 229) / (Laumann 1973: 5f.) -- is configured below.
+%    The Merkblatt explicitly notes that the exact bibliography layout may vary
+%    by tool/style, as long as it is "eine in der Soziologie uebliche
+%    Bibliographiestruktur"; author-year satisfies that.
+%--------------------------------------------------------------------------------
+\RequirePackage[
+backend=biber,
+style=apa,
+urldate=short,
+]{biblatex}
+\DeclareLanguageMapping{ngerman}{ngerman-apa}
+
+% Colour the whole in-text citation, not just the year. biblatex-apa hyperlinks
+% the year alone (apa.cbx, bibmacro cite:plabelyear+extradate), so hyperref's
+% citecolor by itself would leave the author name black. This hook runs inside
+% each citation's group, so the colour ends with the citation; the enclosing
+% parentheses are included, which keeps \autocite and \textcite consistent.
+\AtEveryCite{\color{citeblue}}
+
+% In-text page reference with a colon:  (Author Year: page)
+\DeclareDelimFormat{postnotedelim}{\addcolon\space}
+% Multiple works in one parenthesis are separated by a semicolon (default),
+% matching (Mayer 1977; Ziegler 1985; Teckenberg 1991).
+
+% "(Eingesehen am TT.MM.JJJJ)" for online sources.
+\DefineBibliographyStrings{ngerman}{%
+  urlseen = {Eingesehen am},%
+}
+% German short dates without the default thin space after the dots:
+% "03.05.2011" instead of "03. 05. 2011" (matches the Merkblatt example).
+\DefineBibliographyExtras{ngerman}{%
+  \protected\def\mkbibdateshort#1#2#3{%
+    \iffieldundef{#3}
+      {}
+      {\mkdayzeros{\thefield{#3}}\adddot}%
+    \iffieldundef{#2}
+      {}
+      {\mkmonthzeros{\thefield{#2}}%
+       \iffieldundef{#1}
+         {}
+         {\iffieldundef{#3}{/}{\adddot}}}%
+    \iffieldbibstring{#1}
+      {\bibstring{\thefield{#1}}}
+      {\dateeraprintpre{#1}\mkyearzeros{\thefield{#1}}}}%
+}
+
+% ---- Sociology journal layout: "Journaltitle, Volume: Pages" ----------------
+% Matches the Merkblatt example
+%   Henz, U. und I. Maas (1995). „...". Koelner Zeitschrift ..., 47: 605-633.
+% i.e. no "In:" before the journal, a comma before the volume, a colon before
+% the pages and no "S." prefix. (Issue/number, if present, follows the volume.)
+\renewbibmacro*{in:}{%
+  \ifentrytype{article}{}{\printtext{\bibstring{in}\intitlepunct}}}
+
+\renewbibmacro*{journal+issuetitle}{%
+  \usebibmacro{journal}%
+  \setunit*{\addcomma\space}%
+  \printfield{volume}%
+  \setunit*{\addspace}%
+  \printfield{number}%
+  \newunit}
+
+\DeclareFieldFormat[article]{pages}{#1}% no "S." prefix for journal articles
+
+\renewbibmacro*{note+pages}{%
+  \printfield{note}%
+  \ifentrytype{article}
+    {\setunit{\addcolon\space}}
+    {\setunit{\bibpagespunct}}%
+  \printfield{pages}%
+  \newunit}
+
+%--------------------------------------------------------------------------------
+% 9) THESIS METADATA  -- set these in the main file before \makedeckblatt
+%--------------------------------------------------------------------------------
+\newcommand*{\@thesistitle}{Titel der Bachelorarbeit}
+\newcommand*{\thesistitle}[1]{\renewcommand*{\@thesistitle}{#1}}
+
+\newcommand*{\@thesisauthor}{Vorname Nachname}
+\newcommand*{\thesisauthor}[1]{\renewcommand*{\@thesisauthor}{#1}}
+
+\newcommand*{\@thesismatrikel}{}
+\newcommand*{\thesismatrikel}[1]{\renewcommand*{\@thesismatrikel}{#1}}
+
+\newcommand*{\@thesiscontact}{}
+\newcommand*{\thesiscontact}[1]{\renewcommand*{\@thesiscontact}{#1}}
+
+\newcommand*{\@thesisfirstreviewer}{Prof. Dr. Erstgutachter/in}
+\newcommand*{\thesisfirstreviewer}[1]{\renewcommand*{\@thesisfirstreviewer}{#1}}
+
+\newcommand*{\@thesissecondreviewer}{}
+\newcommand*{\thesissecondreviewer}[1]{\renewcommand*{\@thesissecondreviewer}{#1}}
+
+% Studiengang / Fakultaet default to the binding Bamberg Soziologie wording.
+\newcommand*{\@thesisstudiengang}{Soziologie}
+\newcommand*{\thesisstudiengang}[1]{\renewcommand*{\@thesisstudiengang}{#1}}
+
+\newcommand*{\@thesisfaculty}{Sozial- und Wirtschaftswissenschaften}
+\newcommand*{\thesisfaculty}[1]{\renewcommand*{\@thesisfaculty}{#1}}
+
+\newcommand*{\@thesisdate}{\today}
+\newcommand*{\thesisdate}[1]{\renewcommand*{\@thesisdate}{#1}}
+
+% Logo file (place the image in figures/, without extension here). Optional:
+% if the file is absent the cover still compiles, leaving room for the logo.
+\newcommand*{\@thesislogo}{figures/logo-uni-bamberg}
+\newcommand*{\thesislogo}[1]{\renewcommand*{\@thesislogo}{#1}}
+
+%--------------------------------------------------------------------------------
+% 10) COVER PAGE  (Merkblatt 3.2, Abbildung 1 -- verbindliches Muster)
+%     Keeps the binding wording:
+%       Thema / Bachelorarbeit / im Studiengang ... / in der Fakultaet ...
+%       der Otto-Friedrich-Universitaet Bamberg / Verfasser / Gutachter.
+%--------------------------------------------------------------------------------
+\newcommand{\makedeckblatt}{%
+  \begin{titlepage}
+    \centering
+    \thispagestyle{empty}
+    % --- Logo (optional; .png or .pdf) ---
+    \IfFileExists{\@thesislogo.png}%
+      {\includegraphics[width=0.35\textwidth]{\@thesislogo}\par\vspace{1.2cm}}%
+      {\IfFileExists{\@thesislogo.pdf}%
+        {\includegraphics[width=0.35\textwidth]{\@thesislogo}\par\vspace{1.2cm}}%
+        {\vspace*{2.0cm}}}%
+    % --- Thema ---
+    % {\large Thema:\par}
+    \vspace{0.4cm}
+   	{\Large \bfseries \@thesistitle \par}
+    \vspace{1.0cm}
+    % --- Binding block ---
+    {\Large\bfseries Bachelorarbeit\par}
+    \vspace{0.1cm}
+    {\large im Studiengang \@thesisstudiengang\par}
+    \vspace{0.1cm}
+    {\large in der Fakultät \@thesisfaculty\par}
+    {\large der Otto-Friedrich-Universität Bamberg\par}
+    \vfill
+    
+    %\vspace{-2cm}
+    % --- Verfasser / Gutachter ---
+    \begin{minipage}{\textwidth}
+      \raggedright
+      \large
+      \textbf{Verfasser:} \\
+       \@thesisauthor\par
+      \ifx\@thesismatrikel\empty\else
+      {\small Matrikelnummer: \@thesismatrikel}\par
+      \fi
+      \ifx\@thesiscontact\empty\else
+       {\small Email: \@thesiscontact}\par
+      \fi
+      \vspace{0.8cm}
+      \textbf{Gutachterin:} \\
+       \@thesisfirstreviewer\par
+      \ifx\@thesissecondreviewer\empty\else
+        \hspace*{2.35em}\@thesissecondreviewer\par
+      \fi
+      \vspace{0.8cm}
+      \normalsize Abgabedatum: \@thesisdate\par
+    \end{minipage}
+    \vspace{1.2cm}
+  \end{titlepage}
+}
+
+%--------------------------------------------------------------------------------
+% 11) EIDESSTATTLICHE ERKLAERUNG  (Merkblatt 3.2 -- verbindlicher Wortlaut)
+%     NOTE: The paragraph number below (§ 5 Abs. 5 PuStO) is taken verbatim from
+%     the 2022 Merkblatt. Please verify it against the PuStO version in force for
+%     your examination; universities update this wording (e.g. an AI-tools clause).
+%--------------------------------------------------------------------------------
+\newcommand{\eidesstattlicheerklaerung}{%
+  \clearpage
+  \thispagestyle{plain}
+  \section*{Eidesstattliche Erklärung}
+  \addcontentsline{toc}{chapter}{Eidesstattliche Erklärung}%
+  \noindent
+  Ich erkläre hiermit gemäß § 5 Abs.\ 5 PuStO, dass ich die vorstehende
+  Bachelorarbeit selbständig verfasst und keine anderen als die angegebenen
+  Quellen und Hilfsmittel benutzt habe.
+  \par\vspace{2.5cm}
+  \noindent
+  \makebox[6cm]{\hrulefill}\hfill\makebox[6cm]{\hrulefill}\\[0.3em]
+  \makebox[6cm][l]{(Datum)}\hfill\makebox[6cm][l]{(Unterschrift)}
+}
+
+\endinput

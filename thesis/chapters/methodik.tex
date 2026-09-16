@@ -1,0 +1,93 @@
+% ---------------------------------------------------------------------------
+% Hauptteil, Teil 3: Methodik (Erhebungs-, Auswahl- und Analysemethoden)
+% ---------------------------------------------------------------------------
+\chapter{Methodik}
+\label{cha:methodik}
+
+In diesem Kapitel wird der methodische Aufbau der vorliegenden Replikations- und Erweiterungsstudie erläutert. Zunächst werden das Forschungsdesign sowie die Replikations- bzw. Erweiterungsstrategie erläutert. Nach der Vorstellung der verwendeten Datenbasis und der Stichprobe werden anschließend die Bildung der analytischen Stichprobe sowie die Operationalisierung der für die empirische Analyse relevanten Variablen erläutert. Abschließend wird die empirische Analysemethode dargestellt, mit der sowohl die Ergebnisse der Originalstudie repliziert als auch die im Rahmen dieser Arbeit vorgenommene Erweiterung empirisch untersucht werden.
+
+\section{Forschungsdesign und Replikationsstrategie}
+\label{cha:replikationsstrategie}
+
+\textcite{Kanas:2023} verwenden in ihrer Studie ein natürliches Experiment. Ziel ist es, den kausalen Einfluss der Verfügbarkeit von lokalen Sprachkursen für Geflüchtete in Deutschland auf deren Integration in den Arbeitsmarkt zu untersuchen.
+
+Das natürliche Experiment basiert auf dem Identifikationsproblem. Es wird betont, dass die Tatsache, dass die Geflüchteten ihren Wohnort (Bundesland oder Kreis) selbst wählen können, zu einem Problem der Wohnortauswahl führen könnte. Motivierte und lernwillige Geflüchtete könnten sich in Bundesländern oder Kreisen niederlassen, in denen mehr Deutschkurse angeboten werden. Dies würde den Zusammenhang zwischen dem Angebot an Deutschkursen und der Integration der Geflüchteten in den Arbeitsmarkt möglicherweise nicht korrekt widerspiegeln.
+
+Aufgrund der „Initial Allocation Policy“ (EASY) wird der erste Wohnort der Geflüchteten vom Staat zugewiesen, sodass sie keinen eigenen Wohnort wählen dürfen. Durch die „Wohnsitzauflage“ kann der Wohnort der Geflüchteten vom Staat zugewiesen werden, wodurch ihre Mobilität hinsichtlich der Wahl eines Wohnorts in anderen Regionen eingeschränkt wird.
+
+Die „Treatment“-Gruppe wird nicht als Teilnahme von Geflüchteten an Sprachkursen definiert. \textcite{Kanas:2023} definieren Treatment als das lokale Angebot an Integrationskursen im Landkreis, in dem die Person wohnt. Die Autorinnen beschreiben dies als Intention-to-Treat-Design. 
+
+Die Replikationsstrategie dieser Arbeit basiert darauf, das grundlegende empirische Design der Originalstudie zu reproduzieren. In der Originalstudie untersuchten \textcite{Kanas:2023} im Rahmen eines natürlichen Experiments den kausalen Einfluss der in Deutschland für Geflüchtete verfügbaren Integrationskurse auf die Integration der Geflüchteten in den deutschen Arbeitsmarkt. Unter Berücksichtigung des empirischen Vorgehens der ursprünglichen Studie wird versucht zu testen, ob sich die Ergebnisse reproduzieren lassen.
+
+Das Forschungsdesign, die analytische Stichprobe, die Operationalisierung der Variablen und die Regressionsstrategie des Originalartikels werden weiterhin beibehalten. Der Originalartikel untersucht die heterogenen Effekte des Angebots an Sprachkursen auf die Integration von Geflüchteten in den Arbeitsmarkt. Der Beitrag zum Originalartikel besteht darin, zu untersuchen, ob sich die Wirkung des Angebots an Sprachkursen auf die Beschäftigung je nach Asylstatus unterscheidet. Der konkrete Beitrag dieser Erweiterung ist die Untersuchung, welche Gruppe von Geflüchteten am stärksten vom Angebot an Sprachkursen profitiert.
+
+\section{Datenbasis und Stichprobe}
+\label{cha:datenbasis}
+
+Die vorliegende Arbeit sowie die ursprüngliche Studie von \textcite{Kanas:2023} basieren auf dem Datensatz „IAB-BAMF-SOEP Survey of Refugees“ als Hauptdatensatz \parencite{iab_bamf_soep_2021}. Dieser Datensatz umfasst Asylsuchende und Flüchtlinge in Deutschland. Die erste Welle der IAB-BAMF-SOEP-Flüchtlingsbefragung wurde 2016 durchgeführt und umfasste Geflüchtete und Asylsuchende, die seit 2013 nach Deutschland gekommen waren. Die Stichprobe wurde auf Grundlage des Ausländerzentralregisters (AZR) gezogen. Der Datensatz wird vom IAB, dem BAMF-FZ und dem SOEP/DIW Berlin als repräsentative Längsschnittbefragung von Haushalten durchgeführt. Durch die Längsschnittbefragung ist es möglich, dieselben Personen über verschiedene Erhebungswellen hinweg zu untersuchen. Diese Längsschnittbefragung bietet die Möglichkeit, die Situation von Geflüchteten auf dem Arbeitsmarkt im Zeitverlauf zu untersuchen. Im Originalartikel wurden die vier Erhebungswellen aus den Jahren 2016 bis 2019 gepoolt. Die daraus resultierende Ausgangsstichprobe umfasst 18.342 Beobachtungen von insgesamt 8.321 Personen.
+
+Der Datensatz „BAMF-Integrationskurs-Geschäftsstatistik“ wird als Zusatzdatensatz verwendet \parencite{BAMF2020}. Dieser Datensatz enthält Informationen über die Entwicklung der Integrationskurse auf Kreisebene sowie über die Anzahl der an Geflüchtete ausgegebenen Teilnahmescheine. Die DESTATIS-Daten wurden als Hauptquelle für die Kontrollvariablen auf Kreisebene verwendet. Die Variablen Bevölkerungsdichte, Arbeitslosenquote, Ausländeranteil und CDU/CSU-Stimmenanteil wurden anhand des DESTATIS-Datensatzes erstellt \parencite{destatis_2021e,destatis_2021d,destatis_2021c,destatis_2021b,destatis_2021a}. Somit stammt der Großteil der kontextbezogenen Kontrollvariablen auf Kreisebene aus den amtlichen Statistiken von DESTATIS, während für die Variable „Angst vor Zuwanderung“ die SOEP-Daten verwendet wurden.
+
+
+\section{Bildung der analytischen Stichprobe}
+\label{cha:bildung}
+
+Die zu Beginn verwendete Stichprobe besteht aus 8.321 Personen und 18.342 Personenbeobachtungen. Kanas und Kosyakova planten, Flüchtlinge, die einer restriktiven Wohnsitzauflage unterliegen, in ihre Untersuchung einzubeziehen. Der Grund dafür ist, dass ein Umzug von Flüchtlingen aus dem Landkreis, dem sie zunächst zugewiesen wurden, in eine andere von ihnen gewünschte Region zu einem Problem des residential sorting/self selection führen kann. Es wird angenommen, dass die Einbeziehung ausschließlich von Flüchtlingen mit Wohnsitzauflage in die Stichprobe dieses Problem reduziert. Daher wurde angegeben, dass 2.713 Personen / 7.279 Personenjahre ausgeschlossen wurden.
+
+\input{tables/tab01_sample_selection}
+
+Bei der Bildung der analytischen Stichprobe betrifft der zweite Faktor den Zeitpunkt des Interviews. Personen, deren erstes Interview innerhalb der ersten zwei Jahre ihres Aufenthalts in Deutschland durchgeführt wurde, wurden in die Analyse einbezogen. Geflüchtete, deren erstes Interview nicht innerhalb dieses Zeitraums durchgeführt wurde, wurden aus der Forschungsstichprobe ausgeschlossen. Der Grund dafür ist der Recall Bias. Um mögliche Verzerrungen aufgrund von Erinnerungseffekten zu reduzieren, wurden 1.622 Personen / 2.953 aus der Stichprobe der Untersuchung ausgeschlossen.
+
+Das Angebot an Sprachkursen in der Region, der eine Person zugewiesen wird, stellt eine der zentralen Variablen dar. Für die vorliegende Studie ist die Kenntnis des konkreten Landkreises, dem Geflüchtete für ihren Wohnsitz zugewiesen werden, von zentraler Bedeutung, da bei unbekanntem Zuweisungskreis nicht bestimmt werden kann, welches Sprachkursangebot der jeweiligen Person zur Verfügung steht. Aufgrund dieses Kriteriums wurden 695 Personen sowie 1.542 Personenbeobachtungen aus der Analyse ausgeschlossen.
+
+Die Stichprobe der Untersuchung unterliegt einem Alterskriterium. Personen unter 18 Jahren und über 64 Jahren wurden aus der Stichprobe ausgeschlossen. Die Untersuchungsstichprobe umfasst Personen, die auf dem Arbeitsmarkt beschäftigungsfähig sind.
+
+Personen mit unvollständigen Angaben wurden aus der Stichprobe ausgeschlossen. Personen mit fehlenden Angaben zur Staatsangehörigkeit, Personen mit mehreren Asylanträgen oder Personen, die noch keinen Asylantrag gestellt haben, wurden aus diesem Grund aus der Stichprobe ausgeschlossen. Diese Angaben wurden nicht in die Stichprobe aufgenommen, da sie die Datenqualität verschlechtern könnten und die für das Forschungsdesign erforderlichen Informationen fehlten.
+
+Als letztes Ausschlusskriterium wurden sechs Personenbeobachtungen aufgrund fehlender oder auf Null festgelegter Gewichte ausgeschlossen. Somit bilden 2.730 Personen mit 5.467 Personenbeobachtungen bzw. Personenjahren die Stichprobe dieser Untersuchung.
+
+\section{Operationalisierung der Variablen}
+\label{cha:operationalisierung}
+
+Arbeitsmarkterfolg wird als abhängige Variable verwendet. Die Arbeitsmarktvariable wird als Beschäftigungsstatus gemäß der eigenen Angabe der Person definiert. Die Messung der Variable „bezahlte Beschäftigung“ erfolgt anhand einer binären Kodierung in „beschäftigt“ und „nicht beschäftigt“. Im Rahmen der Studie von Kanas und Kosyakova wurde als unabhängige Variable definiert, ob eine Person in einem bezahlten Arbeitsverhältnis steht oder nicht. Der Grund dafür ist, dass die Beschäftigung im Kontext der Arbeitsmarktintegration eine zentrale Rolle spielt.
+
+Die zentrale unabhängige Variable, „County-Level Supply of Integration Courses“, erfasst das Angebot an Integrationskursen in dem Landkreis, dem eine Person ursprünglich zugewiesen wurde. Zunächst wird das lokale Angebot an Integrationskursen auf Landkreisebene bestimmt. Hierzu wird das Verhältnis zwischen der Anzahl der gestarteten Integrationskurse und der Anzahl der ausgegebenen Kursgutscheine berechnet. Die daraus resultierenden Verhältnisse werden anschließend standardisiert, um das lokale Angebot an Sprachkursen für Flüchtlinge zwischen verschiedenen Landkreisen vergleichbar zu machen.
+
+Vier intermediäre Outcomes werden verwendet. Als intermediäre Outcomes dienen die Deutschkenntnisse, der Abschluss des Integrationskurses, der Erwerb eines Sprachzertifikats und die Häufigkeit der Kontakte zu Deutschen. Bei den Deutschkenntnissen wurde versucht, die Lese-, Sprech- und Schreibfähigkeiten separat zu messen. Die Deutschkenntnisse werden in diesen Bereichen auf einer Skala von 0 („überhaupt nicht“) bis 4 („sehr gut“) bewertet. Aus den drei Werten für Lesen, Schreiben und Sprechen wird ein additiver Index zwischen 0 und 12 gebildet. Hohe Werte stehen für gute Deutschkenntnisse.
+
+Der Abschluss eines Integrationskurses ist eine weitere Variable, die als intermediary outcome herangezogen wird. Personen, die den Integrationskurs abgeschlossen haben, wurden mit 1 kodiert. Personen, die sich nicht für einen Integrationskurs angemeldet haben oder diesen noch nicht abgeschlossen haben, wurden hingegen mit 0 kodiert. Der Erwerb eines Sprachzertifikats wird ebenfalls als intermediary outcome herangezogen. Personen, die ein Zertifikat der Stufen A1–C2 erworben haben, werden mit 1 kodiert, während alle anderen Personen mit 0 kodiert werden. Das letzte intermediary outcome wurde als Häufigkeit der Kontakte zu Deutschen herangezogen. Die Variable nimmt Werte zwischen 0 („nie“) und 5 („jeden Tag“) an. Ein hoher Wert bedeutet häufigere Kontakte, während ein niedrigerer Wert weniger Kontakte zu Deutschen bedeutet.
+
+Für die individuelle Ebene wurden Kontrollvariablen verwendet. Die „Bildungsjahre vor der Migration“ messen die Bildungsjahre der Person vor ihrer Ankunft in Deutschland und werden als kontinuierliche Variable verwendet. Diese Bildungsjahre umfassen die Schulzeit, die Berufsausbildung und die Zeit an Hochschuleinrichtungen. Die „Berufserfahrung vor der Migration“ wurde binär gemessen, und zwar nach Flüchtlingen, die vor ihrer Ankunft in Deutschland beschäftigt waren, und solchen, die nicht beschäftigt waren.
+
+Die Kontrollvariable „Herkunftsland“ verwendet die Herkunftsländer der Geflüchteten als kategoriale und gruppierte Kontrollvariable. Die Aufenthaltsdauer der Geflüchteten in Deutschland wurde in Monaten gemessen. Diese Variable beschreibt somit die Aufenthaltsdauer der Geflüchteten in Jahren.
+
+Der Status des Asylantrags wurde in drei verschiedene Gruppen unterteilt und operationalisiert. Diese wurden als „genehmigt“, „abgelehnt“ und „keine Entscheidung“ definiert. Der Asylstatus wurde als Kontrollvariable verwendet, da davon ausgegangen wurde, dass er einen Einfluss darauf haben könnte, ob Flüchtlinge in Sprachkurse und das Sprachenlernen investieren oder nicht.
+
+In der Studie wurden außerdem soziodemografische Variablen herangezogen. Dabei handelt es sich um die Variablen „Weibliches Geschlecht“, „Kinder unter 16 Jahren im Haushalt“, „Einreise nach Deutschland mit der Familie“, „Unterstützung durch Familie oder Verwandte in Deutschland vor der Migration“, „Alter zum Zeitpunkt des ersten Interviews“ und „Traumatische Erlebnisse während der Flucht nach Deutschland“.
+
+% sdsfdsfdfdf Section~\ref{cha:datenbasis}
+
+\section{Bildung der analytischen Stichprobe für Erweiterung}
+\label{cha:stichprobe-erw}
+
+Tabelle~\ref{tab:stichprobenselektion} zeigt die Verteilung der analytischen Stichprobe nach Asylanträgen. Es werden drei verschiedene Gruppen unterschieden: „abgelehnt“, „anerkannt“ und „keine Entscheidung“. Darüber hinaus werden diese drei Gruppen hinsichtlich ihrer Aufenthaltsdauer in Deutschland sowie im Hinblick auf Faktoren, die für die Integration von Bedeutung sind, miteinander verglichen.
+
+Die Stichprobe der Analyse umfasst 2.730 Personen und 5.467 Personenjahre. Den größten Anteil macht mit 52,1 Prozent die Gruppe derjenigen aus, über deren Antrag noch nicht entschieden wurde. 30,7 Prozent der Beobachtungen entfallen auf Personen, deren Status anerkannt wurde. 17,2 Prozent entfallen auf Personen, deren Asylantrag abgelehnt wurde.
+
+Die Aufenthaltsdauer von Personen in Deutschland wird nach Statusgruppen in Jahren angegeben. Die durchschnittliche Aufenthaltsdauer von Personen, deren Asylantrag anerkannt wurde, beträgt 2,50 Jahre, während die durchschnittliche Aufenthaltsdauer von Personen, deren Antrag abgelehnt wurde, bei 2,80 Jahren liegt. Bei Personen, über deren Antrag noch nicht entschieden wurde, beträgt die durchschnittliche Aufenthaltsdauer 2,12 Jahre.
+
+\input{tables/ext_asyl_descriptives}
+
+Im Hinblick auf die integrationsbezogenen Merkmale bestehen ebenfalls deutliche Unterschiede je nach Statusgruppe. Zu den integrationsbezogenen Merkmalen werden folgende Kategorien gezählt: Deutschkenntnisse, Besuch eines Integrationskurses, Abschluss eines Integrationskurses, Erwerb eines Sprachzertifikats und Häufigkeit der Kontakte zu Deutschen.
+
+Auch bei den integrationsbezogenen Merkmalen bestehen deutliche Unterschiede je nach Statusgruppe. Zu den integrationsbezogenen Merkmalen zählen: Deutschkenntnisse, Besuch eines Integrationskurses, Abschluss eines Integrationskurses, Erwerb eines Sprachzertifikats und Häufigkeit der Kontakte zu Deutschen.
+
+Insbesondere bei der Variable „Teilnahme an einem Integrationskurs“ sind deutliche Unterschiede festzustellen. Während 62,3 Prozent der Personen mit anerkanntem Status an einem Integrationskurs teilnahmen, betrug dieser Anteil bei den Personen mit abgelehntem Status 40,7 Prozent. In der Gruppe mit noch unbekanntem Status lag dieser Anteil bei 34,1 Prozent.
+
+Auch hinsichtlich des Abschlusses des Integrationskurses bestehen Unterschiede zwischen den Gruppen. Während 38,4 Prozent der Personen mit anerkanntem Status den Integrationskurs abgeschlossen haben, haben 28,2 Prozent der Personen mit abgelehntem Status den Kurs abgeschlossen. In der Gruppe „Keine Entscheidung“ haben 19,4 Prozent den Integrationskurs abgeschlossen. Auch beim Faktor „Abschluss des Integrationskurses“ weist die Gruppe mit anerkanntem Status den höchsten Prozentsatz auf.
+
+Mit einem Anteil von 52,6 Prozent stellen Personen mit anerkanntem Aufenthaltsstatus auch beim Erwerb eines Sprachzertifikats die größte Gruppe dar. Von der Gruppe der abgelehnten Antragsteller verfügten 48,8 Prozent über ein Sprachzertifikat. In der Gruppe mit dem Status „Noch keine Entscheidung“ verfügten 30 Prozent über ein Sprachzertifikat. Betrachtet man schließlich die Merkmale „Beschäftigung“ und „Häufigkeit des Kontakts zu Deutschen“, ergibt sich ein nur geringer Unterschied.
+
+Tabelle~\ref{tab:ext-asyl-uebergang} vergleicht den Status bei der ersten Beobachtung mit dem Status im Erhebungsjahr. Sie zeigt, ob sich der Status bei der ersten Beobachtung im Erhebungsjahr geändert hat oder nicht. Bei Personen, die bei der ersten Erhebung den Status „anerkannt“ oder „abgelehnt“ hatten, änderte sich der Status im Erhebungsjahr nicht. Bei einem Teil der Personen, die bei der ersten Erhebung den Status „keine Entscheidung“ hatten, änderte sich der Status im Erhebungsjahr. Bei 15 Prozent der Personen, die bei der ersten Erhebung den Status „keine Entscheidung“ hatten, wurde der Status auf „anerkannt“ geändert. Bei 10,7 Prozent der Gruppe, die ursprünglich den Status „keine Entscheidung“ hatte, änderte sich der Status hingegen auf „abgelehnt“.
+
+
